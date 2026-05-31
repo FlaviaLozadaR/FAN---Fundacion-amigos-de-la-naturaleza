@@ -142,8 +142,8 @@ function Sidebar({ role, setRole, view, setView, open, setOpen }){
   );
 }
 
-function App({ tweaks }){
-  const [role, setRole] = useState('visitante');
+function App({ tweaks, initialRole='visitante' }){
+  const [role, setRole] = useState(initialRole);
   const [view, setView] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [product, setProduct] = useState(null);
@@ -246,10 +246,28 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
 
 function Root(){
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [showLanding, setShowLanding] = useState(true);
+  const [entryRole, setEntryRole] = useState('visitante');
+
   useEffect(()=>{ document.documentElement.style.setProperty('--font-display', `"${tweaks.font}", Georgia, serif`); }, [tweaks.font]);
+
+  const handleEnterApp = (role) => {
+    setEntryRole(role);
+    setShowLanding(false);
+    window.scrollTo(0, 0);
+  };
+
+  if(showLanding){
+    return (
+      <ToastProvider>
+        <LandingPage onEnter={handleEnterApp} />
+      </ToastProvider>
+    );
+  }
+
   return (
     <ToastProvider>
-      <App tweaks={tweaks} />
+      <App tweaks={tweaks} initialRole={entryRole} />
       <TweaksPanel title="Tweaks">
         <TweakSection label="Pantalla de inicio (visitante / suscriptor)">
           <TweakRadio label="Disposición del dashboard" value={tweaks.dashVariant}
