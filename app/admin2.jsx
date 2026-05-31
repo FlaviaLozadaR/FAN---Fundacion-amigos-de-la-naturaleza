@@ -3,7 +3,7 @@
    alertas, recetario + shell del panel admin
    ============================================================ */
 
-const API_URL = 'http://localhost:3001';
+const API_URL = 'https://backend-innova-eif1.onrender.com';
 
 /* ---------- Datos demo — Recetario admin ---------- */
 const CATEGORIAS_RECETA = ['Plato principal','Repostería','Desayunos','Postres','Condimentos','Ensaladas','Sopas','Bebidas','Snacks'];

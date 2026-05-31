@@ -872,7 +872,7 @@ function ScreenRecetario(){
   const [query, setQuery] = useState('');
 
   useEffect(()=>{
-    fetch('http://localhost:3001/api/recetas?estado=publicada')
+    fetch('https://backend-innova-eif1.onrender.com/api/recetas?estado=publicada')
       .then(r=>r.ok?r.json():null)
       .then(data=>{ if(data?.recetas?.length>0) setRecetas(data.recetas); })
       .catch(()=>{}); // fallback silencioso al array estático
@@ -933,7 +933,7 @@ function ScreenRecetario(){
   FANNY — Asistente culinario con IA (exclusivo suscriptores)
    ============================================================ */
 
-const FANI_API_URL = 'http://localhost:3001/api/fani/consultar';
+const FANI_API_URL = 'https://backend-innova-eif1.onrender.com/api/fani/consultar';
 
 function FANIEmptyState() {
   return (
