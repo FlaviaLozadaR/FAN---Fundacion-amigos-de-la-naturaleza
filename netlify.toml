@@ -2,6 +2,14 @@
   publish = "."
   command = ""
 
+# Imágenes y assets: en dev Vite las sirve desde public/ en la raíz,
+# en Netlify están en /public/. Este redirect las reubica automáticamente.
+[[redirects]]
+  from = "/*"
+  to = "/public/:splat"
+  status = 200
+  force = false
+
 [[headers]]
   for = "/app/*.jsx"
   [headers.values]
