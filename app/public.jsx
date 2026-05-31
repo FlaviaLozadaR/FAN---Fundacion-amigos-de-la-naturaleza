@@ -867,10 +867,22 @@ function RecipeDetail({ receta, onClose }){
 }
 
 function ScreenRecetario(){
+  const [recetas, setRecetas] = useState(RECETAS);
   const [open, setOpen] = useState(null);
   const [query, setQuery] = useState('');
-  const recetasFiltradas = RECETAS.filter(r => {
-    const texto = `${r.titulo} ${r.autores} ${Object.values(r.ingredientes).flat().join(' ')}`.toLowerCase();
+
+  useEffect(()=>{
+    fetch('http://localhost:3001/api/recetas?estado=publicada')
+      .then(r=>r.ok?r.json():null)
+      .then(data=>{ if(data?.recetas?.length>0) setRecetas(data.recetas); })
+      .catch(()=>{}); // fallback silencioso al array estático
+  }, []);
+
+  const recetasFiltradas = recetas.filter(r => {
+    const ingredientesTexto = r.ingredientes
+      ? Object.values(r.ingredientes).flat().join(' ')
+      : '';
+    const texto = `${r.titulo} ${r.autores||''} ${ingredientesTexto}`.toLowerCase();
     return texto.includes(query.trim().toLowerCase());
   });
   return (
@@ -918,7 +930,7 @@ function ScreenRecetario(){
 }
 
 /* ============================================================
-   FANI — Asistente culinario con IA (exclusivo suscriptores)
+  FANNY — Asistente culinario con IA (exclusivo suscriptores)
    ============================================================ */
 
 const FANI_API_URL = 'http://localhost:3001/api/fani/consultar';
@@ -929,8 +941,8 @@ function FANIEmptyState() {
       <div className="w-18 h-18 w-[72px] h-[72px] rounded-2xl bg-gradient-to-br from-[#1B5036] to-[#74C69D] flex items-center justify-center mb-5 shadow-lg">
         <Icon name="bot" size={32} className="text-white" />
       </div>
-      <h3 className="text-[18px] font-semibold text-[#1f2a21] mb-2" style={{ fontFamily: 'var(--font-display)' }}>FANI está lista para ayudarte</h3>
-      <p className="text-[13.5px] text-[#8a948a] max-w-sm leading-relaxed">Seleccioná los productos del bosque que tenés disponibles y FANI te sugerirá recetas del recetario FAN que podés preparar hoy.</p>
+        <h3 className="text-[18px] font-semibold text-[#1f2a21] mb-2" style={{ fontFamily: 'var(--font-display)' }}>FANNY está lista para ayudarte</h3>
+          <p className="text-[13.5px] text-[#8a948a] max-w-sm leading-relaxed">Seleccioná los productos del bosque que tenés disponibles y FANNY te sugerirá recetas del recetario FAN que podés preparar hoy.</p>
       <div className="mt-6 grid grid-cols-3 gap-3 w-full max-w-[280px]">
         {[['leaf','17 productos','del bosque'],['book','20 recetas','del recetario'],['sparkles','IA Groq','tiempo real']].map(([icon,label,sub])=>(
           <div key={label} className="bg-white rounded-xl border border-[#E8EBE6] p-3 flex flex-col items-center gap-1.5">
@@ -956,7 +968,7 @@ function FANILoading() {
         </div>
       </div>
       <h3 className="text-[16px] font-semibold text-[#1f2a21] mb-1.5" style={{ fontFamily: 'var(--font-display)' }}>Consultando el recetario...</h3>
-      <p className="text-[13px] text-[#8a948a]">FANI está identificando las mejores recetas para tus ingredientes</p>
+      <p className="text-[13px] text-[#8a948a]">FANNY está identificando las mejores recetas para tus ingredientes</p>
       <div className="mt-5 flex gap-1.5">
         {[0,1,2].map(i=>(
           <div key={i} className="w-2 h-2 rounded-full bg-[#2D6A4F]" style={{ animation:`ping 1.2s ease-in-out ${i*0.2}s infinite` }} />
@@ -998,7 +1010,7 @@ function FANIResult({ result, onOpenRecipe }) {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1B5036] to-[#74C69D] flex items-center justify-center shrink-0">
             <Icon name="sparkles" size={14} className="text-white" />
           </div>
-          <span className="text-[14px] font-semibold text-[#1B5036]">FANI</span>
+          <span className="text-[14px] font-semibold text-[#1B5036]">FANNY</span>
           {result.demo && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F4A261]/20 text-[#b05a10] border border-[#F4A261]/30">Demo</span>}
         </div>
         <div className="text-[13.5px] text-[#3a4f41] leading-relaxed whitespace-pre-line">{result.explicacion}</div>
@@ -1035,7 +1047,7 @@ function FANIResult({ result, onOpenRecipe }) {
 
 function FANILocked({ onNav }) {
   const features = [
-    ['bot','IA con Groq','Sugerencias personalizadas basadas en tus ingredientes disponibles'],
+    ['bot','IA','Sugerencias personalizadas basadas en tus ingredientes disponibles'],
     ['book','Recetario completo','20 recetas del bosque chiquitano creadas con chefs e institutos de gastronomía'],
     ['sparkles','Productos FAN','Aprendé a usar almendra chiquitana, asaí, motacú, totaí y más en tu cocina'],
     ['heart','Para vos','Basado en los productos que seguís y tu perfil culinario'],
@@ -1050,11 +1062,11 @@ function FANILocked({ onNav }) {
 
         {/* Encabezado superior */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-[#2D6A4F] flex items-center justify-center text-white shrink-0">
-            <Icon name="sparkles" size={18} />
+          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 overflow-hidden border border-[#E8EBE6]">
+            <img src="/LOGO/LogoIA.png" alt="FANI IA" className="w-full h-full object-contain p-1" />
           </div>
           <div>
-            <div className="text-[20px] font-semibold text-[#1f2a21]" style={{ fontFamily:'var(--font-display)' }}>FANI · Asistente culinario del bosque</div>
+            <div className="text-[20px] font-semibold text-[#1f2a21]" style={{ fontFamily:'var(--font-display)' }}>FANNY · Asistente culinario del bosque</div>
             <div className="text-[12.5px] text-[#8a948a]">Inteligencia artificial aplicada a los productos del bosque chiquitano</div>
           </div>
           <span className="ml-auto flex items-center gap-1.5 bg-[#EDF2ED] text-[#2D6A4F] px-3 py-1.5 rounded-full text-[11px] font-semibold shrink-0">
@@ -1074,7 +1086,7 @@ function FANILocked({ onNav }) {
 
             <div className="relative z-10 p-8 lg:p-10 flex-1 flex flex-col">
               <p className="text-[15px] lg:text-[16px] text-white/90 leading-relaxed mb-8 max-w-lg">
-                Descubrí qué recetas podés preparar con los productos del bosque chiquitano. FANI usa IA para sugerirte recetas del recetario FAN personalizadas para vos.
+                Descubrí qué recetas podés preparar con los productos del bosque chiquitano. FANNY usa IA para sugerirte recetas del recetario FAN personalizadas para vos.
               </p>
 
               {/* Preview simulado del chat */}
@@ -1097,19 +1109,19 @@ function FANILocked({ onNav }) {
                     <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D]/70 animate-bounce" style={{ animationDelay:'150ms' }}></span>
                     <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D]/70 animate-bounce" style={{ animationDelay:'300ms' }}></span>
                   </span>
-                  <span className="text-[11.5px] text-white/40">FANI está pensando…</span>
+                  <span className="text-[11.5px] text-white/40">FANNY está pensando…</span>
                 </div>
               </div>
 
               {/* CTA */}
               <div>
-                <button
+                  <button
                   onClick={()=>onNav('suscripcion')}
                   className="w-full h-12 rounded-xl bg-white text-[#1B5036] text-[14.5px] font-semibold flex items-center justify-center gap-2 hover:bg-[#f0faf5] transition shadow-lg"
                 >
-                  <Icon name="bell" size={17} />Suscribirme para acceder a FANI
+                  <Icon name="bell" size={17} />Suscribirme para acceder a FANNY
                 </button>
-                <p className="text-center text-[11.5px] text-white/45 mt-2.5">Gratis · alertas de temporada + acceso completo a FANI</p>
+                <p className="text-center text-[11.5px] text-white/45 mt-2.5">Gratis · alertas de temporada + acceso completo a FANNY</p>
               </div>
             </div>
           </div>
@@ -1185,7 +1197,7 @@ function FANIChat() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[23px] font-semibold tracking-tight" style={{ fontFamily:'var(--font-display)' }}>FANI</span>
+              <span className="text-[23px] font-semibold tracking-tight" style={{ fontFamily:'var(--font-display)' }}>FANNY</span>
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/20 uppercase tracking-widest">Beta</span>
               </div>
               <div className="text-[12px] text-white/70">Asistente culinario del bosque chiquitano</div>
@@ -1197,7 +1209,7 @@ function FANIChat() {
             </button>
           )}
         </div>
-        <p className="relative z-10 text-[13px] text-white/75 mt-3 max-w-xl leading-relaxed">
+            <p className="relative z-10 text-[13px] text-white/75 mt-3 max-w-xl leading-relaxed">
           Seleccioná los productos del bosque que tenés disponibles y consultame — te sugiero recetas del recetario FAN que podés preparar hoy.
         </p>
       </div>
@@ -1248,8 +1260,8 @@ function FANIChat() {
               canSubmit
                 ? 'bg-gradient-to-r from-[#2D6A4F] to-[#74C69D] text-white shadow-md hover:shadow-lg hover:from-[#235741] hover:to-[#2D6A4F] active:scale-[.99]'
                 : 'bg-[#EDF2ED] text-[#9aa79d] cursor-not-allowed')}>
-            {loading ? <><Icon name="loader" size={18} className="animate-spin" />Consultando a FANI...</>
-                     : <><Icon name="sparkles" size={18} />Consultar a FANI</>}
+            {loading ? <><Icon name="loader" size={18} className="animate-spin" />Consultando a FANNY...</>
+                     : <><Icon name="sparkles" size={18} />Consultar a FANNY</>}
           </button>
           {!canSubmit && !loading && (
             <p className="text-center text-[11.5px] text-[#aab1a6]">Seleccioná al menos un ingrediente para consultar</p>
@@ -1260,9 +1272,9 @@ function FANIChat() {
         <div className="bg-white rounded-2xl border border-[#E8EBE6] min-h-[380px] overflow-hidden">
           {error && (
             <div className="p-5 bg-[#FCF1F1] border-b border-[#F2D1D1] text-[#9A4D14]">
-              <div className="text-[14px] font-semibold">No se pudo consultar a FANI</div>
-              <div className="text-[12.5px] mt-1 leading-relaxed">{error}</div>
-            </div>
+                <div className="text-[14px] font-semibold">No se pudo consultar a FANNY</div>
+                <div className="text-[12.5px] mt-1 leading-relaxed">{error}</div>
+              </div>
           )}
           {!result && !loading && !error && <FANIEmptyState />}
           {loading && <FANILoading />}

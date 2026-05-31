@@ -21,38 +21,72 @@ function ScreenSuscriptor(){
   );
 
   return (
-    <div id="mi-suscripcion" className="max-w-2xl mx-auto">
+    <div id="mi-suscripcion">
       <SectionTitle overline="Mi suscripción" title="Gestiona tus alertas" desc="Actualiza tus productos de interés, tu canal de contacto, o date de baja cuando quieras." />
       <div className="my-5"><SegTabs tabs={[{value:'preferencias',label:'Mis preferencias',icon:'heart'},{value:'cuenta',label:'Canal y baja',icon:'settings'}]} value={tab} onChange={setTab} /></div>
 
       {tab==='preferencias' && (
-        <Card className="p-6 space-y-5">
-          <div className="flex items-center justify-between">
-            <label className="text-[14px] font-semibold text-[#2a352c]">Productos de interés</label>
-            <span className="text-[13px] text-[#9aa79d]">{sel.length} seleccionados</span>
+        <div className="lg:grid lg:grid-cols-[1fr_260px] lg:gap-6 space-y-4 lg:space-y-0 lg:items-start">
+          <Card className="p-6 space-y-5">
+            <div className="flex items-center justify-between">
+              <label className="text-[14px] font-semibold text-[#2a352c]">Productos de interés</label>
+              <span className="text-[13px] text-[#9aa79d]">{sel.length} seleccionados</span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+              {FAN.PRODUCTS.map(p=>{
+                const on = sel.includes(p.id);
+                const est = FAN.estadoTemporada(p);
+                return (
+                  <button key={p.id} onClick={()=>toggle(p.id)} className={cn('flex items-center gap-2 border rounded-xl p-2.5 transition text-left', on?'border-[#2D6A4F] bg-[#E9F1EC]':'border-[#E8EBE6] hover:border-[#cfdbd1]')}>
+                    <ProductGlyph product={p} size={34} rounded="rounded-lg" />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[13px] font-semibold text-[#1f2a21] truncate">{p.nombre}</div>
+                      <span className="w-2 h-2 rounded-full inline-block mt-1" style={{ background:FAN.ESTADOS[est].dot }}></span>
+                    </div>
+                    {on && <Icon name="check" size={15} className="text-[#2D6A4F]" stroke={3} />}
+                  </button>
+                );
+              })}
+            </div>
+            <Button className="w-full lg:hidden" onClick={()=>toast('Preferencias guardadas', { desc:`Recibirás alertas de ${sel.length} productos.` })}><Icon name="check" size={16} />Guardar preferencias</Button>
+          </Card>
+
+          <div className="hidden lg:flex flex-col gap-4">
+            <Card className="p-5 space-y-4">
+              <div className="text-[13px] font-semibold text-[#2a352c]">Resumen</div>
+              <div className="flex items-center gap-3 py-1">
+                <div className="w-11 h-11 rounded-xl bg-[#E9F1EC] flex items-center justify-center shrink-0">
+                  <Icon name="heart" size={20} className="text-[#2D6A4F]" />
+                </div>
+                <div>
+                  <div className="text-[28px] font-bold text-[#1f2a21] leading-none">{sel.length}</div>
+                  <div className="text-[12px] text-[#6b756c] mt-0.5">productos seleccionados</div>
+                </div>
+              </div>
+              <div className="space-y-2 pt-3 border-t border-[#EDF0EB]">
+                {sel.length === 0 && <div className="text-[12px] text-[#9aa79d]">Ningún producto seleccionado</div>}
+                {sel.slice(0,6).map(id=>{
+                  const p = FAN.PRODUCTS.find(x=>x.id===id);
+                  if(!p) return null;
+                  const est = FAN.estadoTemporada(p);
+                  return (
+                    <div key={id} className="flex items-center gap-2">
+                      <ProductGlyph product={p} size={24} rounded="rounded-md" />
+                      <span className="text-[12.5px] text-[#1f2a21] truncate flex-1">{p.nombre}</span>
+                      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background:FAN.ESTADOS[est].dot }}></span>
+                    </div>
+                  );
+                })}
+                {sel.length > 6 && <div className="text-[12px] text-[#9aa79d]">+{sel.length-6} más</div>}
+              </div>
+            </Card>
+            <Button className="w-full" onClick={()=>toast('Preferencias guardadas', { desc:`Recibirás alertas de ${sel.length} productos.` })}><Icon name="check" size={16} />Guardar preferencias</Button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-            {FAN.PRODUCTS.map(p=>{
-              const on = sel.includes(p.id);
-              const est = FAN.estadoTemporada(p);
-              return (
-                <button key={p.id} onClick={()=>toggle(p.id)} className={cn('flex items-center gap-2 border rounded-xl p-2.5 transition text-left', on?'border-[#2D6A4F] bg-[#E9F1EC]':'border-[#E8EBE6] hover:border-[#cfdbd1]')}>
-                  <ProductGlyph product={p} size={34} rounded="rounded-lg" />
-                  <div className="min-w-0 flex-1">
-                    <div className="text-[13px] font-semibold text-[#1f2a21] truncate">{p.nombre}</div>
-                    <span className="w-2 h-2 rounded-full inline-block mt-1" style={{ background:FAN.ESTADOS[est].dot }}></span>
-                  </div>
-                  {on && <Icon name="check" size={15} className="text-[#2D6A4F]" stroke={3} />}
-                </button>
-              );
-            })}
-          </div>
-          <Button className="w-full" onClick={()=>toast('Preferencias guardadas', { desc:`Recibirás alertas de ${sel.length} productos.` })}><Icon name="check" size={16} />Guardar preferencias</Button>
-        </Card>
+        </div>
       )}
 
       {tab==='cuenta' && (
-        <div className="space-y-4">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-6 space-y-4 lg:space-y-0 lg:items-start">
           <Card className="p-6 space-y-5">
             <div>
               <label className="text-[13px] font-semibold text-[#2a352c] mb-2.5 block">¿Cómo te avisamos?</label>
@@ -71,13 +105,13 @@ function ScreenSuscriptor(){
             <Button variant="secondary" className="w-full" onClick={()=>toast('Datos actualizados')}>Actualizar canal</Button>
           </Card>
           <Card className="p-6 border-[#f0d9dc]">
-            <div className="flex items-start gap-3">
-              <span className="w-9 h-9 rounded-lg bg-[#FCEEF0] flex items-center justify-center text-[#B23A48] shrink-0"><Icon name="bell" size={17} /></span>
+            <div className="flex items-start gap-4">
+              <span className="w-10 h-10 rounded-xl bg-[#FCEEF0] flex items-center justify-center text-[#B23A48] shrink-0"><Icon name="bell" size={18} /></span>
               <div className="flex-1">
-                <div className="text-[14.5px] font-semibold text-[#1f2a21]">Darse de baja</div>
-                <div className="text-[13px] text-[#6b756c] mt-0.5">Dejarás de recibir todas las alertas de temporada.</div>
+                <div className="text-[14.5px] font-semibold text-[#1f2a21] mb-1">Darse de baja</div>
+                <div className="text-[13px] text-[#6b756c] leading-relaxed">Dejarás de recibir todas las alertas de temporada. Podrás volver a suscribirte cuando quieras.</div>
+                <Button variant="danger" className="mt-4" onClick={()=>{ setBaja(true); toast('Te diste de baja', { type:'error' }); }}>Darme de baja</Button>
               </div>
-              <Button variant="danger" onClick={()=>{ setBaja(true); toast('Te diste de baja', { type:'error' }); }}>Darme de baja</Button>
             </div>
           </Card>
         </div>

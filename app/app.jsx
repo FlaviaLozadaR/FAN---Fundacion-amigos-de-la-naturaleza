@@ -10,10 +10,10 @@ const ROLES = {
 };
 
 const NAV = {
-  visitante: [['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map'],['fani','FANI','sparkles']],
-  suscriptor:[['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map'],['fani','FANI','sparkles'],['mi-suscripcion','Mi suscripción','heart']],
+  visitante: [['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map'],['fani','FANNY','sparkles']],
+  suscriptor:[['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map'],['fani','FANNY','sparkles'],['mi-suscripcion','Mi suscripción','heart']],
   productor: [['productos','Mis productos','package'],['metricas','Métricas','chart']],
-  admin:     [['resumen','Resumen','home'],['aprobaciones','Productores','users'],['productos','Catálogo','package'],['temporadas','Temporadas','calendar'],['suscriptores','Suscriptores','bell'],['alertas','Enviar alertas','send']]
+  admin:     [['resumen','Resumen','home'],['aprobaciones','Productores','users'],['productos','Catálogo','package'],['temporadas','Temporadas','calendar'],['suscriptores','Suscriptores','bell'],['alertas','Enviar alertas','send'],['recetario','Recetario','book']]
 };
 const DEFAULT_VIEW = { visitante:'dashboard', suscriptor:'dashboard', productor:'productos', admin:'resumen' };
 
@@ -27,14 +27,18 @@ function personaDe(role){
 function LogoFAN({ light=false }){
   // Render only the logo image, filling the header area (no visible text)
   return (
-    <div className="flex-1 h-full flex items-center justify-center">
-      <img src="/Logo.png" alt="Fundación Amigos de la Naturaleza" style={{ width: 'auto', maxWidth: '85%', maxHeight: 56, objectFit: 'contain', objectPosition: 'center' }} />
+    <div className="flex-1 h-full flex items-center justify-center gap-3">
+      <img src="/LOGO/LogoIA.png" alt="FANNY" style={{ width: 'auto', maxWidth: 44, maxHeight: 44, objectFit: 'contain', objectPosition: 'center' }} />
+      <div className="hidden lg:block text-left">
+        <div className="text-sm font-semibold text-[#1f2a21]" style={{ lineHeight:1 }}>{'FANNY'}</div>
+        <div className="text-[11px] text-[#6b756c]">Asistente culinario</div>
+      </div>
     </div>
   );
 }
 
 /* ---------- Menú de cambio de rol (demo) ---------- */
-function RoleMenu({ role, setRole }){
+function RoleMenu({ role, onSelectRole }){
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
@@ -49,7 +53,7 @@ function RoleMenu({ role, setRole }){
           <div className="absolute bottom-12 left-0 right-0 bg-white rounded-2xl border border-[#E8EBE6] shadow-xl z-50 p-2 animate-[sheetUp_.16s_ease]">
             <div className="px-2.5 py-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-[#9aa79d]">Demostración de roles</div>
             {Object.entries(ROLES).map(([k,v])=>(
-              <button key={k} onClick={()=>{ setRole(k); setOpen(false); }} className={cn('w-full flex items-center gap-2.5 p-2 rounded-xl transition text-left', role===k?'bg-[#EDF2ED]':'hover:bg-[#F4F7F4]')}>
+              <button key={k} onClick={()=>{ onSelectRole(k); setOpen(false); }} className={cn('w-full flex items-center gap-2.5 p-2 rounded-xl transition text-left', role===k?'bg-[#EDF2ED]':'hover:bg-[#F4F7F4]')}>
                 <span className="w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0" style={{ background:v.color }}><Icon name={v.icon} size={15} /></span>
                 <div className="flex-1 min-w-0"><div className="text-[13.5px] font-semibold text-[#1f2a21]">{v.label}</div><div className="text-[11px] text-[#8a948a] leading-tight truncate">{v.desc}</div></div>
                 {role===k && <Icon name="check" size={15} className="text-[#2D6A4F]" stroke={2.5} />}
@@ -131,7 +135,7 @@ function Sidebar({ role, setRole, view, setView, open, setOpen }){
             </div>
             <Icon name="chevronRight" size={16} className="text-[#c2cbc3]" />
           </button>
-          <RoleMenu role={role} setRole={setRole} />
+          <RoleMenu role={role} onSelectRole={setRole} />
         </div>
       </aside>
     </>
@@ -149,6 +153,15 @@ function App({ tweaks }){
 
   const handleApproveProducer = (id, nuevoEstado) => {
     if(id === 'sabores-chiquitos') setProducerEstado(nuevoEstado);
+  };
+
+  const changeRole = (nextRole) => {
+    try {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    } catch(e){}
+    setView(DEFAULT_VIEW[nextRole]);
+    setSidebarOpen(false);
+    setRole(nextRole);
   };
 
   // changeView updates both state and the URL hash so each section has a route
@@ -180,7 +193,7 @@ function App({ tweaks }){
 
   return (
     <div className="min-h-screen lg:flex" style={{ background:'#F7F8F4' }}>
-      <Sidebar role={role} setRole={setRole} view={view} setView={changeView} open={sidebarOpen} setOpen={setSidebarOpen} />
+      <Sidebar role={role} setRole={changeRole} view={view} setView={changeView} open={sidebarOpen} setOpen={setSidebarOpen} />
 
       <div className="flex-1 min-w-0 flex flex-col min-h-screen">
         {/* barra superior móvil */}

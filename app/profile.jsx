@@ -116,7 +116,7 @@ function ProfileVisitante({ onNav }){
           <h3 className="text-[17px] font-semibold text-[#1B5036]" style={{ fontFamily:'var(--font-display)' }}>Suscríbete para recibir alertas</h3>
           <p className="text-[13.5px] text-[#4f6356] leading-relaxed mt-1.5">Las alertas de temporada son para suscriptores. Al suscribirte desbloqueas:</p>
           <div className="space-y-2 mt-4">
-            {[['bell','Alertas cuando tus productos entran en temporada'],['sparkles','Recomendaciones “Para ti”'],['heart','Seguimiento de productos favoritos'],['users','Contacto directo con productores']].map(([ic,t])=>(
+            {[['bell','Alertas cuando tus productos entran en temporada'],['sparkles','Recomendaciones "Para ti"'],['heart','Seguimiento de productos favoritos'],['users','Contacto directo con productores']].map(([ic,t])=>(
               <div key={t} className="flex items-center gap-2.5 text-[13px] text-[#3a4a3f]"><Icon name={ic} size={16} className="text-[#2D6A4F] shrink-0" />{t}</div>
             ))}
           </div>
@@ -197,7 +197,7 @@ function ProfileSuscriptor({ onNav, onOpen }){
         <Card className="p-6 h-fit">
           <h3 className="text-[16px] font-semibold text-[#1f2a21] mb-4 flex items-center gap-2" style={{ fontFamily:'var(--font-display)' }}><Icon name="badge" size={18} className="text-[#2D6A4F]" />Tus beneficios</h3>
           <div className="space-y-2.5">
-            {[['bell','Alertas personalizadas','WhatsApp cuando tus productos cambian de temporada'],['sparkles','Recomendaciones “Para ti”','El inicio prioriza lo que te interesa'],['users','Contacto directo','Llega al productor sin intermediarios'],['calendar','Acceso anticipado','Te avisamos primero de nuevos productores']].map(([ic,t,desc])=>(
+            {[['bell','Alertas personalizadas','WhatsApp cuando tus productos cambian de temporada'],['sparkles','Recomendaciones "Para ti"','El inicio prioriza lo que te interesa'],['users','Contacto directo','Llega al productor sin intermediarios'],['calendar','Acceso anticipado','Te avisamos primero de nuevos productores']].map(([ic,t,desc])=>(
               <div key={t} className="flex items-start gap-3 p-3 rounded-xl bg-[#F7FAF7] border border-[#EEF1EC]">
                 <span className="w-8 h-8 rounded-lg bg-[#E9F1EC] flex items-center justify-center text-[#2D6A4F] shrink-0"><Icon name={ic} size={16} /></span>
                 <div><div className="text-[13.5px] font-semibold text-[#1f2a21]">{t}</div><div className="text-[12px] text-[#8a948a] leading-snug mt-0.5">{desc}</div></div>
@@ -245,7 +245,7 @@ function ProfileAdmin(){
             <Badge className="bg-[#E3F1EA] text-[#1B5036]">Total</Badge>
           </div>
           <div className="space-y-2">
-            {['Aprobar productores','Gestionar catálogo','Editar temporadas','Enviar alertas'].map(t=>(
+            {['Aprobar productores','Gestionar catálogo','Gestionar recetario','Editar temporadas','Ver suscriptores','Enviar alertas'].map(t=>(
               <div key={t} className="flex items-center gap-2.5 text-[13px] text-[#48524a]"><Icon name="checkCircle" size={16} className="text-[#2D6A4F] shrink-0" />{t}</div>
             ))}
           </div>

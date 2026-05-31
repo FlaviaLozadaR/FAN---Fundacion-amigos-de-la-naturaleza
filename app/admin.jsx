@@ -2,6 +2,14 @@
    PLATAFORMA FAN — Panel Administrador (back office)
    ============================================================ */
 
+// Acceso explícito vía window para evitar ReferenceError si producer.jsx carga en orden distinto
+const ESTADO_PRODUCTOR = window.ESTADO_PRODUCTOR || {
+  PENDIENTE:  { label:'Pendiente de aprobación', bg:'#FCEFE1', color:'#9A4D14', dot:'#F4A261', icon:'clock' },
+  APROBADO:   { label:'Aprobado',                bg:'#E3F1EA', color:'#1B5036', dot:'#2D6A4F', icon:'checkCircle' },
+  RECHAZADO:  { label:'Rechazado',               bg:'#FCEEF0', color:'#B23A48', dot:'#B23A48', icon:'x' },
+  SUSPENDIDO: { label:'Suspendido',              bg:'#F1F2F1', color:'#52564F', dot:'#9CA3AF', icon:'info' },
+};
+
 /* mini gráfica de barras */
 function BarChart({ data, labels, color='#2D6A4F', height=160 }){
   const max = Math.max(...data);
@@ -9,8 +17,18 @@ function BarChart({ data, labels, color='#2D6A4F', height=160 }){
     <div className="flex items-end gap-2" style={{ height }}>
       {data.map((v,i)=>(
         <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-          <div className="w-full rounded-t-md transition-all relative" style={{ height:(v/max*(height-26))+'px', background: i===data.length-1?color:color+'55' }}>
-            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#48524a] opacity-0 group-hover:opacity-100 transition tabular-nums">{v.toLocaleString()}</span>
+          <div
+            className="w-full rounded-t-md transition-all duration-200 relative hover:-translate-y-0.5"
+            title={`${labels[i]} · ${v.toLocaleString()} visitas`}
+            style={{
+              height:(v/max*(height-26))+'px',
+              background: i===data.length-1
+                ? `linear-gradient(180deg, ${color} 0%, #245e43 100%)`
+                : `linear-gradient(180deg, ${color}cc 0%, ${color}66 100%)`,
+              boxShadow: i===data.length-1 ? '0 8px 18px rgba(45,106,79,0.14)' : 'none'
+            }}
+          >
+            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-semibold text-[#48524a] opacity-0 group-hover:opacity-100 transition tabular-nums whitespace-nowrap">{v.toLocaleString()}</span>
           </div>
           <span className="text-[10px] text-[#9aa79d]">{labels[i]}</span>
         </div>
@@ -55,6 +73,11 @@ function AdminDashboard({ onTab }){
               <div className="flex-1"><div className="text-[14px] font-semibold text-[#1B5036]">Enviar alerta de temporada</div><div className="text-[12px] text-[#1B5036]/80">A {FAN.METRICAS.suscriptores.toLocaleString()} suscriptores</div></div>
               <Icon name="chevronRight" size={18} className="text-[#0E5468]" />
             </button>
+            <button onClick={()=>onTab('recetario')} className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#F4F7F4] hover:bg-[#EDF2ED] transition text-left">
+              <span className="w-9 h-9 rounded-lg bg-[#2D6A4F] flex items-center justify-center text-white"><Icon name="book" size={16} /></span>
+              <div className="flex-1"><div className="text-[14px] font-semibold text-[#1f2a21]">Gestionar recetario</div><div className="text-[12px] text-[#6b756c]">20 recetas publicadas</div></div>
+              <Icon name="chevronRight" size={18} className="text-[#9aa79d]" />
+            </button>
           </div>
         </Card>
       </div>
@@ -67,6 +90,25 @@ function AdminDashboard({ onTab }){
               <div className="text-[26px] font-semibold tracking-tight" style={{ fontFamily:'var(--font-display)', color:c }}>{v}</div>
               <div className="text-[13px] font-medium text-[#3a4a3f] mt-0.5">{l}</div>
               <div className="text-[12px] text-[#9aa79d] mt-0.5">{d}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-[15px] font-semibold text-[#1f2a21]" style={{ fontFamily:'var(--font-display)', lineHeight:1.3 }}>Recetario FAN</h4>
+          <button onClick={()=>onTab('recetario')} className="text-[13px] text-[#2D6A4F] font-medium flex items-center gap-1 hover:opacity-75 transition">
+            Ver todo <Icon name="arrowRight" size={14} />
+          </button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[['Total recetas','20','book','#2D6A4F'],['Publicadas','20','eye','#2D6A4F'],['Borradores','0','edit','#9aa79d'],['Total vistas','19.043','trending','#F4A261']].map(([l,v,ic,c])=>(
+            <div key={l} className="border border-[#EEF1EC] rounded-xl p-4">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center mb-3" style={{ background:c+'18', color:c }}>
+                <Icon name={ic} size={14} />
+              </div>
+              <div className="text-[24px] font-semibold tracking-tight leading-none" style={{ fontFamily:'var(--font-display)', color:c }}>{v}</div>
+              <div className="text-[12.5px] text-[#6b756c] mt-1">{l}</div>
             </div>
           ))}
         </div>

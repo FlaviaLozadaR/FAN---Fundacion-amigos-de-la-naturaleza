@@ -343,8 +343,8 @@ FAN.METRICAS = {
   pendientes: 2
 };
 
-// Serie de visitas por mes (para gráficas)
-FAN.SERIE_VISITAS = [1820,2010,2240,2680,3150,2980,3320,3610,3980,4120,4210,3870];
+// Serie de visitas por mes (datos simulados para gráficas)
+FAN.SERIE_VISITAS = [1680,1795,2010,2330,2740,2585,2890,3180,3495,3720,3840,3610];
 
 // Suscriptores de ejemplo
 FAN.SUSCRIPTORES = [

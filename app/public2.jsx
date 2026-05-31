@@ -63,6 +63,79 @@ function ProductDetail({ product, onClose, onOpenProductor, onNav }){
     }
   };
 
+  // Generar imagen estilo share (1200x628) a partir de un contenedor offscreen
+  const captureCard = async () => {
+    const w = 1200, h = 628;
+    if(typeof html2canvas === 'undefined'){
+      await new Promise((resolve, reject)=>{
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+        s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+      });
+    }
+    // Crear contenedor offscreen
+    const cont = document.createElement('div');
+    cont.style.position = 'fixed';
+    cont.style.left = '-9999px';
+    cont.style.top = '0';
+    cont.style.width = w + 'px';
+    cont.style.height = h + 'px';
+    cont.style.display = 'flex';
+    cont.style.alignItems = 'center';
+    cont.style.justifyContent = 'center';
+    cont.style.background = '#ffffff';
+    // Inner card markup with inline styles to ensure consistent rendering
+    const logo = '/Logo.png';
+    const hero = heroSrc || '';
+    const safeTitle = (product.nombre || '').replace(/</g,'&lt;');
+    const safeDesc = (product.desc || '').replace(/</g,'&lt;').slice(0,220);
+    cont.innerHTML = `
+      <div style="width:${w - 80}px; height:${h - 80}px; background:#fff; border-radius:20px; box-shadow:0 18px 60px rgba(15,25,18,0.15); overflow:hidden; display:flex; font-family: Inter, system-ui, -apple-system, 'Helvetica Neue', Arial;">
+        <div style="width:52%; background:#f3f7f3; position:relative; display:flex; align-items:center; justify-content:center;">
+          ${ hero ? `<img src="${hero}" style="width:100%; height:100%; object-fit:cover; display:block;"/>` : `<div style="width:100%; height:100%; background:linear-gradient(135deg,#e6f2e9,#f7fbf7);"></div>` }
+        </div>
+        <div style="width:48%; padding:34px 36px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="font-size:12px; color:#2D6A4F; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;">Producto</div>
+            <h2 style="margin:12px 0 6px; font-size:36px; color:#13271d; line-height:1;">${safeTitle}</h2>
+            <p style="font-size:15px; color:#516154; margin-top:6px;">${safeDesc}...</p>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="${logo}" style="width:56px; height:56px; object-fit:contain; border-radius:8px; background:#fff; padding:6px;" />
+              <div style="font-size:13px; color:#5e6b60;">Plataforma FAN — Bosque Chiquitano</div>
+            </div>
+            <div style="font-size:12px; color:#9aa79d;">${new Date().toLocaleDateString()}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(cont);
+
+    // Esperar que imágenes internas carguen
+    const imgs = Array.from(cont.getElementsByTagName('img'));
+    await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res=>{ img.onload = img.onerror = res; })));
+
+    try{
+      const canvas = await html2canvas(cont, { useCORS:true, backgroundColor: '#ffffff', width: w, height: h, scale: 2 });
+      canvas.toBlob(blob=>{
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${product.nombre.replace(/\s+/g,'_')}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    }catch(err){
+      console.error('share capture error', err);
+      toast('No se pudo generar la imagen', { type:'error' });
+    }finally{
+      cont.remove();
+    }
+  };
+
   return (
     <Modal open={!!product} onClose={onClose} size="lg" className="p-0" skipSidebar={true} fullWidth={true}>
       {/* Hero image */}
@@ -77,14 +150,17 @@ function ProductDetail({ product, onClose, onOpenProductor, onNav }){
         <button onClick={onClose} className="absolute top-4 left-4 w-10 h-10 rounded-full bg-white/85 hover:bg-white flex items-center justify-center text-[#5e6b60] shadow-sm transition">
           <Icon name="arrowLeft" size={18} />
         </button>
-        {/* Botón compartir — top-right */}
-        <button onClick={handleShare} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/85 hover:bg-white flex items-center justify-center text-[#5e6b60] shadow-sm transition">
-          <Icon name="send" size={16} />
-        </button>
+          {/* Botones top-right: compartir texto y como imagen */}
+          <div className="absolute top-4 right-4 flex gap-2">
+            <button onClick={handleShare} className="w-10 h-10 rounded-full bg-white/85 hover:bg-white flex items-center justify-center text-[#5e6b60] shadow-sm transition"><Icon name="send" size={16} /></button>
+            <button onClick={captureCard} className="w-10 h-10 rounded-full bg-white/85 hover:bg-white flex items-center justify-center text-[#5e6b60] shadow-sm transition" title="Compartir como imagen">
+              <Icon name="image" size={16} />
+            </button>
+          </div>
       </div>
 
       {/* Tarjeta blanca que emerge sobre el hero */}
-      <div className="relative z-10 max-w-[880px] mx-auto -mt-36 px-4 sm:px-8 pb-10">
+      <div id={`product-share-${product.id}`} className="relative z-10 max-w-[880px] mx-auto -mt-36 px-4 sm:px-8 pb-10">
         <div className="bg-white rounded-2xl p-6 sm:p-8" style={{ boxShadow:'0 8px 48px rgba(18,30,18,0.13)' }}>
 
           {/* Badge de estado */}
@@ -150,6 +226,11 @@ function ProductDetail({ product, onClose, onOpenProductor, onNav }){
                   <div className="min-w-0">
                     <div className="font-semibold text-[#1f2a21] text-[15px] truncate">{prods[0].nombre}</div>
                     <div className="text-[13px] text-[#6b756c]">{prods[0].ubicacion.split(',')[0]}</div>
+                    {prods[0].contacto?.tel && (
+                      <div className="mt-1">
+                        <a href={`tel:${String(prods[0].contacto.tel).replace(/\s+/g,'')}`} className="text-[13px] font-medium text-[#2D6A4F] hover:underline">Llamar {prods[0].contacto.tel}</a>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <button className="text-[13px] font-medium text-[#2D6A4F] hover:underline whitespace-nowrap shrink-0" onClick={()=>{
