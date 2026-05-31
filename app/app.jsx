@@ -169,9 +169,9 @@ function App({ tweaks, initialRole='visitante' }){
 
   // initialize view from hash or role default
   useEffect(()=>{
-    const h = (window.location.hash||'').replace('#','');
-    if(h) setView(h);
-    else changeView(DEFAULT_VIEW[role]);
+    // Al cambiar de rol, siempre ir a la vista por defecto (ignorar el hash anterior)
+    try { window.history.replaceState(null, '', window.location.pathname + window.location.search); } catch(e){}
+    setView(DEFAULT_VIEW[role]);
     setProduct(null); setProductor(null); setSidebarOpen(false);
   }, [role]);
 
