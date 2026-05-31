@@ -56,7 +56,10 @@ const ICON_PATHS = {
   download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
   loader: '<path d="M21 12a9 9 0 1 1-6.219-8.56"/>',
   wand: '<path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/>',
-  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>'
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  chefHat: '<path d="M17 21a1 1 0 0 0 1-1v-5.35c0-.457.316-.844.727-1.041a4 4 0 0 0-2.134-7.589 5 5 0 0 0-9.186 0 4 4 0 0 0-2.134 7.588c.411.198.727.585.727 1.041V20a1 1 0 0 0 1 1z"/><path d="M6 21h12"/>',
+  bot: '<path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/>'
 };
 
 function Icon({ name, size = 20, stroke = 2, className = '', style = {} }){
@@ -231,15 +234,28 @@ function Modal({ open, onClose, children, className='', size='md', skipSidebar=f
     ? (leftOffset ? { marginLeft: leftOffset, width: `calc(100% - ${leftOffset}px)` } : { width:'100%' })
     : undefined;
 
-  const innerClass = cn('relative bg-white w-full shadow-2xl overflow-y-auto animate-[sheetUp_.22s_cubic-bezier(.2,.8,.2,1)]',
-    fullWidth ? 'max-w-none max-h-screen' : 'max-h-[92vh] ' + widths[size],
+  // If a modal is marked with a special class (e.g. recipe-modal) and we're on small screens,
+  // force it to occupy the full viewport height and align to the very top so nothing shows above it.
+  let finalInnerStyle = innerStyle;
+  try{
+    if(typeof window !== 'undefined' && className && className.includes('recipe-modal') && window.innerWidth <= 640){
+      // ensure outer container has no padding and is pinned
+      containerStyle = Object.assign({}, containerStyle || {}, { padding:0, top:0 });
+      finalInnerStyle = Object.assign({}, finalInnerStyle || {}, { top:0, height: '100vh', margin:0, borderRadius:0 });
+      // also remove any rounded class from innerClass by appending a small utility
+      innerClass = innerClass + ' rounded-none';
+    }
+  }catch(e){}
+
+  const innerClass = cn('relative bg-white w-full shadow-2xl overflow-y-auto no-scrollbar animate-[sheetUp_.22s_cubic-bezier(.2,.8,.2,1)]',
+    fullWidth ? 'max-w-none h-screen' : 'max-h-[92vh] ' + widths[size],
     fullWidth ? 'rounded-none' : 'rounded-t-2xl sm:rounded-2xl',
     className);
 
   return (
-    <div className={fullWidth ? 'fixed inset-0 z-[60] flex items-start justify-start' : 'fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4'} style={containerStyle}>
+    <div className={fullWidth ? 'fixed inset-0 flex items-start justify-start' : 'fixed inset-0 flex items-end sm:items-center justify-center p-0 sm:p-4'} style={{ ...containerStyle, zIndex: fullWidth ? 9999 : 60 }}>
       <div className="bg-[#1a241c]/45 backdrop-blur-[2px] animate-[fadeIn_.18s_ease]" style={backdropStyle} onClick={onClose}></div>
-      <div className={innerClass} style={innerStyle}>
+      <div className={innerClass} style={finalInnerStyle}>
         {children}
       </div>
     </div>
@@ -326,5 +342,4 @@ function SectionTitle({ overline, title, desc, action }){
 Object.assign(window, {
   Icon, ICON_PATHS, cn, Button, Card, Badge, StatusBadge, Input, ProductGlyph, Avatar, shade,
   SeasonStrip, Modal, SegTabs, ToastProvider, useToast, Stat, SectionTitle,
-  useState, useEffect, useRef, useMemo, createContext, useContext
-});
+  useState, useEffect, useRef, useMemo, create

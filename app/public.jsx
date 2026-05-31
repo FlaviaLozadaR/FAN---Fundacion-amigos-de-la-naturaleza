@@ -42,7 +42,9 @@ function DashHero(){
   const term = FAN.PRODUCTS.filter(p=>FAN.estadoTemporada(p)==='terminando').length;
   const prox = FAN.PRODUCTS.filter(p=>FAN.estadoTemporada(p)==='proximamente').length;
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-[#dde7df] text-white px-4 sm:px-10 py-10 sm:py-16 min-h-[360px] sm:min-h-[520px]">
+    <div
+      className="relative overflow-hidden text-white px-4 sm:px-10 py-10 sm:py-16 min-h-[420px] sm:min-h-[560px]"
+    >
       {/* background image (reduced brightness) */}
       <img src="/bosque-logo.jpeg" alt="Bosque" className="absolute inset-0 w-full h-full object-cover object-center" style={{ filter: 'brightness(0.78) saturate(0.98)' }} />
       {/* slightly stronger color overlay for readability (subtle) */}
@@ -227,17 +229,19 @@ function DashVariantTimeline({ onOpen }){
 function SubscriberBenefitsBar({ onNav }){
   const me = FAN.ME_SUSCRIPTOR;
   return (
-    <div className="rounded-2xl border border-[#cfe3d6] bg-gradient-to-r from-[#E9F1EC] to-[#EAF4EE] p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-      <div className="flex items-center gap-3 flex-1 min-w-0">
-        <span className="w-11 h-11 rounded-xl bg-[#2D6A4F] flex items-center justify-center text-white shrink-0"><Icon name="badge" size={22} /></span>
-        <div className="min-w-0">
-          <div className="text-[15px] font-semibold text-[#1B5036] flex items-center gap-2">Hola, {me.nombre.split(' ')[0]} <Badge className="bg-white/70 text-[#2D6A4F]">Suscriptor activo</Badge></div>
-          <div className="text-[13px] text-[#4f6356] mt-0.5">Tienes {me.intereses.length} productos en seguimiento · {me.alertasRecibidas} alertas recibidas</div>
+    <div className="relative overflow-hidden border border-[#cfe3d6] bg-gradient-to-r from-[#E9F1EC] to-[#EAF4EE] px-4 sm:px-6 py-4 sm:py-5" style={{ clipPath:'polygon(0 0, calc(100% - 34px) 0, 100% 50%, calc(100% - 34px) 100%, 0 100%, 34px 50%)' }}>
+      <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <span className="w-11 h-11 rounded-none bg-[#2D6A4F] flex items-center justify-center text-white shrink-0" style={{ clipPath:'polygon(18% 0, 82% 0, 100% 18%, 100% 82%, 82% 100%, 18% 100%, 0 82%, 0 18%)' }}><Icon name="badge" size={22} /></span>
+          <div className="min-w-0">
+            <div className="text-[15px] font-semibold text-[#1B5036] flex items-center gap-2">Hola, {me.nombre.split(' ')[0]} <Badge className="bg-white/70 text-[#2D6A4F] rounded-none">Suscriptor activo</Badge></div>
+            <div className="text-[13px] text-[#4f6356] mt-0.5">Tienes {me.intereses.length} productos en seguimiento · {me.alertasRecibidas} alertas recibidas</div>
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-2 shrink-0">
-        <Button variant="secondary" size="sm" onClick={()=>onNav('mi-suscripcion')}><Icon name="heart" size={15} />Mis intereses</Button>
-        <Button size="sm" onClick={()=>onNav('perfil')}><Icon name="user" size={15} />Mi perfil</Button>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button variant="secondary" size="sm" className="rounded-none" onClick={()=>onNav('mi-suscripcion')}><Icon name="heart" size={15} />Mis intereses</Button>
+          <Button size="sm" className="rounded-none" onClick={()=>onNav('perfil')}><Icon name="user" size={15} />Mi perfil</Button>
+        </div>
       </div>
     </div>
   );
@@ -281,8 +285,10 @@ function ParaTiSection({ onOpen }){
 function ScreenDashboard({ onOpen, variant='secciones', onNav, subscriber=false }){
   return (
     <div id="dashboard" className="space-y-8">
-      {subscriber && <SubscriberBenefitsBar onNav={onNav} />}
-      <DashHero />
+      <div className="space-y-0 -mx-4 sm:-mx-6 lg:-mx-8 -mt-6 sm:-mt-9">
+        <DashHero />
+        {subscriber && <SubscriberBenefitsBar onNav={onNav} />}
+      </div>
       {subscriber && <ParaTiSection onOpen={onOpen} />}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <SectionTitle title="Disponibilidad por producto" desc="17 productos del bosque chiquitano y la amazonía norte de Bolivia." />
@@ -750,41 +756,111 @@ const RECETAS = [
 
 function RecipeDetail({ receta, onClose }){
   if(!receta) return null;
+  useEffect(()=>{
+    if(!receta) return;
+    const t = setTimeout(()=>{
+      const el = document.querySelector('.recipe-modal');
+      try{ if(el){ el.scrollTo?.(0,0); el.scrollTop = 0; } else { window.scrollTo?.(0,0); } }catch(e){}
+    }, 60);
+    return ()=>{ clearTimeout(t); };
+  }, [receta]);
+  const titulo = receta.titulo.charAt(0) + receta.titulo.slice(1).toLowerCase();
+  const nPasos = receta.preparacion.length;
+  const nIngCats = Object.keys(receta.ingredientes).length;
+  const notaUtil = receta.notas && !receta.notas.startsWith('Imagen') && !receta.notas.startsWith('Receta provista');
+
   return (
-    <Modal open={!!receta} onClose={onClose} size="lg">
-      <div className="relative px-6 sm:px-8 pt-6 pb-4">
-        <button onClick={onClose} className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-[#5e6b60] transition"><Icon name="x" size={18} /></button>
-        <div className="flex items-start gap-4">
-            <div className="w-28 h-20 rounded-lg overflow-hidden"><img src={receta.imagen || '/bosque-logo.jpeg'} className="w-full h-full object-cover" /></div>
-          <div className="flex-1">
-            <h2 className="text-[22px] font-semibold text-[#1f2a21]" style={{ fontFamily:'var(--font-display)' }}>{receta.titulo}</h2>
-            <div className="text-[13px] text-[#6b756c] mt-1">{receta.autores}</div>
-          </div>
+    <Modal open={!!receta} onClose={onClose} size="lg" className="p-0 recipe-modal" skipSidebar={true} fullWidth={true}>
+      {/* Hero — ocupa el 45% de la pantalla */}
+      <div className="relative w-full overflow-hidden bg-[#1a2a1e]" style={{ height:'45vh', minHeight:280, maxHeight:520 }}>
+        <img src={receta.imagen || '/bosque-logo.jpeg'} alt={receta.titulo}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          style={{ filter:'brightness(0.72) saturate(1.15) contrast(1.05)' }}
+          onError={e=>{ e.target.src='/bosque-logo.jpeg'; }} />
+        {/* overlay inferior */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background:'linear-gradient(180deg,rgba(0,0,0,0) 20%,rgba(0,0,0,0.3) 60%,rgba(0,0,0,0.65) 100%)' }} />
+        {/* overlay lateral derecho para zonas claras */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background:'linear-gradient(to right,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0) 40%,rgba(0,0,0,0.32) 100%)' }} />
+        {/* tinte verde oscuro suave sobre todo */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background:'rgba(18,40,24,0.22)' }} />
+        <button onClick={onClose} className="absolute top-4 left-4 w-10 h-10 rounded-full bg-white/85 hover:bg-white flex items-center justify-center text-[#5e6b60] shadow-sm transition">
+          <Icon name="arrowLeft" size={18} />
+        </button>
+        {/* Título encima de la imagen */}
+        <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 pb-12 pt-6">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/65 mb-1.5">Recetario FAN</div>
+          <h2 className="text-[26px] sm:text-[34px] font-semibold text-white leading-tight" style={{ fontFamily:'var(--font-display)', lineHeight:1.1 }}>{titulo}</h2>
         </div>
       </div>
-      <div className="px-6 sm:px-8 pb-6 space-y-4">
-        <div>
-          <h4 className="text-[13px] font-semibold text-[#2D6A4F] mb-2">Ingredientes</h4>
-            <div className="grid sm:grid-cols-3 gap-3">
-            {Object.entries(receta.ingredientes).map(([k,list])=> (
-              <div key={k} className="bg-[#FBFCFA] border border-[#EEF1EC] rounded-xl p-3">
-                <div className="text-[13px] font-semibold text-[#1f2a21] capitalize">{k}</div>
-                <ul className="text-[13px] text-[#6b756c] mt-2 list-disc list-inside">
-                  {list.map((it,idx)=> <li key={idx}>{it}</li>)}
-                </ul>
+
+      {/* Tarjeta blanca superpuesta */}
+      <div className="relative z-10 max-w-[880px] mx-auto -mt-6 px-4 sm:px-8 pb-10">
+        <div className="bg-white rounded-2xl p-6 sm:p-8" style={{ boxShadow:'0 8px 48px rgba(18,30,18,0.13)' }}>
+
+          {/* Autores + stats */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6 pb-6 border-b border-[#F0F2EE]">
+            <div className="flex items-start gap-3 flex-1 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-[#E9F1EC] flex items-center justify-center shrink-0">
+                <Icon name="users" size={16} className="text-[#2D6A4F]" />
               </div>
-            ))}
+              <div className="min-w-0">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#9aa79d] mb-0.5">Elaborada por</div>
+                <div className="text-[13px] text-[#48524a] leading-snug">{receta.autores}</div>
+              </div>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              {[[nPasos,'pasos','clock'],[nIngCats,'secciones','leaf']].map(([n,u,ic])=>(
+                <div key={u} className="flex items-center gap-2 bg-[#F7FAF7] border border-[#EEF1EC] rounded-xl px-3.5 py-2.5">
+                  <Icon name={ic} size={14} className="text-[#2D6A4F]" />
+                  <span className="text-[13px] font-semibold text-[#1f2a21]">{n}</span>
+                  <span className="text-[11.5px] text-[#9aa79d]">{u}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <h4 className="text-[13px] font-semibold text-[#2D6A4F] mb-2">Preparación</h4>
-          <ol className="list-decimal list-inside space-y-2 text-[14px] text-[#48524a]">
-            {receta.preparacion.map((paso,i)=> <li key={i}>{paso}</li>)}
-          </ol>
-        </div>
+          {/* Ingredientes */}
+          <div className="mb-7">
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#2D6A4F] mb-3 flex items-center gap-1.5">
+              <Icon name="leaf" size={13} />Ingredientes
+            </h4>
+            <div className={cn('grid gap-3', nIngCats===1?'grid-cols-1':nIngCats===2?'sm:grid-cols-2':'sm:grid-cols-3')}>
+              {Object.entries(receta.ingredientes).map(([k,list])=>(
+                <div key={k} className="bg-[#FBFCFA] border border-[#EEF1EC] rounded-xl p-4">
+                  <div className="text-[11.5px] font-semibold uppercase tracking-[0.08em] text-[#2D6A4F] mb-2.5 capitalize">{k}</div>
+                  <ul className="space-y-1.5">
+                    {list.map((it,i)=>(
+                      <li key={i} className="flex items-start gap-2 text-[13px] text-[#48524a] leading-snug">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D] shrink-0 mt-1.5"></span>{it}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        {receta.notas && <div className="text-[13px] text-[#8a948a]">{receta.notas}</div>}
+          {/* Preparación */}
+          <div>
+            <h4 className="text-[12px] font-semibold uppercase tracking-[0.1em] text-[#2D6A4F] mb-4 flex items-center gap-1.5">
+              <Icon name="clock" size={13} />Preparación
+            </h4>
+            <ol className="space-y-3.5">
+              {receta.preparacion.map((paso,i)=>(
+                <li key={i} className="flex gap-3.5">
+                  <span className="w-7 h-7 rounded-full bg-[#2D6A4F] text-white text-[12px] font-semibold flex items-center justify-center shrink-0 mt-0.5">{i+1}</span>
+                  <span className="text-[14px] text-[#48524a] leading-relaxed pt-0.5">{paso}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {notaUtil && (
+            <div className="mt-6 border-t border-[#F0F2EE] pt-4 flex items-start gap-1.5 text-[11.5px] text-[#aab1a6]">
+              <Icon name="info" size={12} className="text-[#9aa79d] mt-0.5 shrink-0" /><span>{receta.notas}</span>
+            </div>
+          )}
+        </div>
       </div>
     </Modal>
   );
@@ -792,12 +868,31 @@ function RecipeDetail({ receta, onClose }){
 
 function ScreenRecetario(){
   const [open, setOpen] = useState(null);
+  const [query, setQuery] = useState('');
+  const recetasFiltradas = RECETAS.filter(r => {
+    const texto = `${r.titulo} ${r.autores} ${Object.values(r.ingredientes).flat().join(' ')}`.toLowerCase();
+    return texto.includes(query.trim().toLowerCase());
+  });
   return (
     <div id="recetario" className="space-y-6">
-      <SectionTitle overline="Recetario" title="Recetario" desc="Seleccioná una receta para ver los detalles." />
+      <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+        <SectionTitle overline="Recetario" title="Recetario" desc="Seleccioná una receta para ver los detalles." />
+        <div className="w-full lg:w-[360px] shrink-0">
+          <label className="sr-only">Buscar receta</label>
+          <div className="relative">
+            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9aa79d]" />
+            <input
+              value={query}
+              onChange={e=>setQuery(e.target.value)}
+              placeholder="Buscar receta, autor o ingrediente"
+              className="w-full h-11 pl-9 pr-3 rounded-xl border border-[#E2E7DE] bg-white text-[14px] text-[#1f2a21] placeholder:text-[#9aa79d] focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/15 focus:border-[#2D6A4F]/40"
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {RECETAS.map(r=> (
+        {recetasFiltradas.map(r=> (
           <button key={r.id} onClick={()=>setOpen(r)} className="text-left bg-white rounded-2xl border border-[#E8EBE6] overflow-hidden shadow-[0_6px_20px_rgba(45,60,45,0.06)] hover:shadow-[0_10px_30px_rgba(45,60,45,0.08)] transition">
             <div className="h-36 bg-[#F3F6F3] flex items-center justify-center overflow-hidden relative">
               <img src={r.imagen} alt={r.titulo} className="w-full h-full object-cover" style={{ filter: 'brightness(1.04) contrast(1.03) saturate(1.05)' }} />
@@ -811,10 +906,379 @@ function ScreenRecetario(){
         ))}
       </div>
 
+      {recetasFiltradas.length === 0 && (
+        <div className="rounded-2xl border border-[#E8EBE6] bg-white p-6 text-center text-[#8a948a]">
+          No encontré recetas con ese texto.
+        </div>
+      )}
+
       <RecipeDetail receta={open} onClose={()=>setOpen(null)} />
     </div>
   );
 }
 
+/* ============================================================
+   FANI — Asistente culinario con IA (exclusivo suscriptores)
+   ============================================================ */
+
+const FANI_API_URL = 'http://localhost:3001/api/fani/consultar';
+
+function FANIEmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center text-center py-14 px-6 h-full">
+      <div className="w-18 h-18 w-[72px] h-[72px] rounded-2xl bg-gradient-to-br from-[#1B5036] to-[#74C69D] flex items-center justify-center mb-5 shadow-lg">
+        <Icon name="bot" size={32} className="text-white" />
+      </div>
+      <h3 className="text-[18px] font-semibold text-[#1f2a21] mb-2" style={{ fontFamily: 'var(--font-display)' }}>FANI está lista para ayudarte</h3>
+      <p className="text-[13.5px] text-[#8a948a] max-w-sm leading-relaxed">Seleccioná los productos del bosque que tenés disponibles y FANI te sugerirá recetas del recetario FAN que podés preparar hoy.</p>
+      <div className="mt-6 grid grid-cols-3 gap-3 w-full max-w-[280px]">
+        {[['leaf','17 productos','del bosque'],['book','20 recetas','del recetario'],['sparkles','IA Groq','tiempo real']].map(([icon,label,sub])=>(
+          <div key={label} className="bg-white rounded-xl border border-[#E8EBE6] p-3 flex flex-col items-center gap-1.5">
+            <span className="w-8 h-8 rounded-lg bg-[#E9F1EC] flex items-center justify-center text-[#2D6A4F]"><Icon name={icon} size={15} /></span>
+            <span className="text-[11px] font-semibold text-[#1f2a21]">{label}</span>
+            <span className="text-[10px] text-[#9aa79d]">{sub}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FANILoading() {
+  return (
+    <div className="flex flex-col items-center justify-center text-center py-14 px-6 h-full">
+      <div className="relative mb-5">
+        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1B5036] to-[#74C69D] flex items-center justify-center shadow-lg">
+          <Icon name="sparkles" size={26} className="text-white animate-pulse" />
+        </div>
+        <div className="absolute -right-1 -bottom-1 w-6 h-6 rounded-full bg-[#74C69D] border-2 border-white flex items-center justify-center">
+          <Icon name="loader" size={12} className="text-white animate-spin" />
+        </div>
+      </div>
+      <h3 className="text-[16px] font-semibold text-[#1f2a21] mb-1.5" style={{ fontFamily: 'var(--font-display)' }}>Consultando el recetario...</h3>
+      <p className="text-[13px] text-[#8a948a]">FANI está identificando las mejores recetas para tus ingredientes</p>
+      <div className="mt-5 flex gap-1.5">
+        {[0,1,2].map(i=>(
+          <div key={i} className="w-2 h-2 rounded-full bg-[#2D6A4F]" style={{ animation:`ping 1.2s ease-in-out ${i*0.2}s infinite` }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FANIRecipeCard({ receta, onOpen, index }) {
+  const titulo = receta.titulo.charAt(0) + receta.titulo.slice(1).toLowerCase();
+  return (
+    <button onClick={()=>onOpen(receta)}
+      className="group w-full text-left bg-white rounded-2xl border border-[#E8EBE6] overflow-hidden shadow-[0_4px_16px_rgba(45,60,45,0.06)] hover:shadow-[0_8px_28px_rgba(45,60,45,0.12)] hover:border-[#cfdbd1] transition-all hover:-translate-y-0.5 flex">
+      <div className="relative w-24 h-24 shrink-0 overflow-hidden bg-[#F3F6F3]">
+        <img src={receta.imagen} alt={receta.titulo} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={e=>{ e.target.src='/bosque-logo.jpeg'; }} />
+        <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-[#2D6A4F] flex items-center justify-center">
+          <span className="text-[10px] font-bold text-white">{index+1}</span>
+        </div>
+      </div>
+      <div className="flex-1 p-3.5 min-w-0">
+        <div className="text-[13px] font-semibold text-[#1f2a21] leading-snug mb-1" style={{ fontFamily:'var(--font-display)' }}>{titulo}</div>
+        <div className="text-[11px] text-[#8a948a] line-clamp-2 leading-relaxed">{receta.autores}</div>
+        <div className="mt-2 flex items-center gap-1 text-[11px] font-medium text-[#2D6A4F]">
+          <Icon name="book" size={11} />Ver receta
+          <Icon name="chevronRight" size={11} className="group-hover:translate-x-0.5 transition" />
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function FANIResult({ result, onOpenRecipe }) {
+  return (
+    <div className="space-y-5 animate-[fadeIn_.3s_ease]">
+      <div className="bg-gradient-to-br from-[#EAF4EE] to-[#E8F6F0] border border-[#cfe3d6] rounded-2xl p-5">
+        <div className="flex items-center gap-2.5 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1B5036] to-[#74C69D] flex items-center justify-center shrink-0">
+            <Icon name="sparkles" size={14} className="text-white" />
+          </div>
+          <span className="text-[14px] font-semibold text-[#1B5036]">FANI</span>
+          {result.demo && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F4A261]/20 text-[#b05a10] border border-[#F4A261]/30">Demo</span>}
+        </div>
+        <div className="text-[13.5px] text-[#3a4f41] leading-relaxed whitespace-pre-line">{result.explicacion}</div>
+      </div>
+
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[11.5px] font-semibold text-[#9aa79d] uppercase tracking-wide">Consultado:</span>
+        {result.ingredientesConsultados.map(ing=>(
+          <span key={ing} className="inline-flex items-center gap-1 h-6 px-2.5 rounded-full bg-white border border-[#E8EBE6] text-[11px] font-medium text-[#5e6b60]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D]"></span>{ing}
+          </span>
+        ))}
+      </div>
+
+      {result.recetas && result.recetas.length > 0 ? (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="w-6 h-6 rounded-lg bg-[#E9F1EC] flex items-center justify-center text-[#2D6A4F]"><Icon name="book" size={13} /></span>
+            <h4 className="text-[14px] font-semibold text-[#1f2a21]">{result.recetas.length === 1 ? 'Receta sugerida' : `${result.recetas.length} recetas sugeridas`}</h4>
+          </div>
+          <div className="space-y-3">
+            {result.recetas.map((r,i)=><FANIRecipeCard key={r.id} receta={r} onOpen={onOpenRecipe} index={i} />)}
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white rounded-2xl border border-[#E8EBE6] p-5 text-center">
+          <Icon name="search" size={24} className="mx-auto mb-2 text-[#c2cbc3]" />
+          <p className="text-[13px] text-[#8a948a]">No se encontraron recetas exactas. Probá agregar algún producto FAN del bosque.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FANILocked({ onNav }) {
+  const features = [
+    ['bot','IA con Groq','Sugerencias personalizadas basadas en tus ingredientes disponibles'],
+    ['book','Recetario completo','20 recetas del bosque chiquitano creadas con chefs e institutos de gastronomía'],
+    ['sparkles','Productos FAN','Aprendé a usar almendra chiquitana, asaí, motacú, totaí y más en tu cocina'],
+    ['heart','Para vos','Basado en los productos que seguís y tu perfil culinario'],
+  ];
+  const preview = [
+    { q:'¿Qué puedo hacer con almendra chiquitana?', a:'Podés preparar un pesto de almendra chiquitana con hierbas del bosque…' },
+    { q:'Dame una receta con asaí para un restaurante.', a:'Te sugiero un ceviche de palmito con reducción de asaí y leche de tigre…' },
+  ];
+  return (
+    <div className="min-h-[calc(100vh-120px)] flex flex-col justify-center py-6">
+      <div className="max-w-5xl mx-auto w-full">
+
+        {/* Encabezado superior */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-[#2D6A4F] flex items-center justify-center text-white shrink-0">
+            <Icon name="sparkles" size={18} />
+          </div>
+          <div>
+            <div className="text-[20px] font-semibold text-[#1f2a21]" style={{ fontFamily:'var(--font-display)' }}>FANI · Asistente culinario del bosque</div>
+            <div className="text-[12.5px] text-[#8a948a]">Inteligencia artificial aplicada a los productos del bosque chiquitano</div>
+          </div>
+          <span className="ml-auto flex items-center gap-1.5 bg-[#EDF2ED] text-[#2D6A4F] px-3 py-1.5 rounded-full text-[11px] font-semibold shrink-0">
+            <Icon name="lock" size={11} />Solo suscriptores
+          </span>
+        </div>
+
+        {/* Layout principal 2 columnas */}
+        <div className="grid lg:grid-cols-[1fr_380px] gap-5 items-stretch">
+
+          {/* Izquierda: hero verde con preview de chat */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1B5036] via-[#2D6A4F] to-[#3a8c68] text-white flex flex-col" style={{ minHeight: 420 }}>
+            {/* decoración */}
+            <div className="absolute -left-12 -top-12 w-64 h-64 rounded-full bg-white/[0.04] pointer-events-none"></div>
+            <div className="absolute right-0 bottom-0 w-80 h-80 rounded-full bg-[#74C69D]/10 pointer-events-none" style={{ transform:'translate(30%, 30%)' }}></div>
+            <div className="absolute left-1/2 top-0 w-px h-full bg-white/5 pointer-events-none"></div>
+
+            <div className="relative z-10 p-8 lg:p-10 flex-1 flex flex-col">
+              <p className="text-[15px] lg:text-[16px] text-white/90 leading-relaxed mb-8 max-w-lg">
+                Descubrí qué recetas podés preparar con los productos del bosque chiquitano. FANI usa IA para sugerirte recetas del recetario FAN personalizadas para vos.
+              </p>
+
+              {/* Preview simulado del chat */}
+              <div className="flex-1 flex flex-col gap-3 mb-8">
+                <div className="text-[10.5px] font-semibold uppercase tracking-widest text-white/40 mb-1">Vista previa</div>
+                {preview.map((m, i) => (
+                  <div key={i} className="flex flex-col gap-2">
+                    <div className="self-end bg-white/15 rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[85%]">
+                      <p className="text-[12.5px] text-white/90 leading-snug">{m.q}</p>
+                    </div>
+                    <div className="self-start bg-white/10 border border-white/10 rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[90%] flex gap-2.5 items-start">
+                      <Icon name="sparkles" size={13} className="text-[#74C69D] shrink-0 mt-0.5" />
+                      <p className="text-[12px] text-white/75 leading-snug">{m.a}</p>
+                    </div>
+                  </div>
+                ))}
+                <div className="self-start flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 rounded-2xl">
+                  <span className="flex gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D]/70 animate-bounce" style={{ animationDelay:'0ms' }}></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D]/70 animate-bounce" style={{ animationDelay:'150ms' }}></span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#74C69D]/70 animate-bounce" style={{ animationDelay:'300ms' }}></span>
+                  </span>
+                  <span className="text-[11.5px] text-white/40">FANI está pensando…</span>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div>
+                <button
+                  onClick={()=>onNav('suscripcion')}
+                  className="w-full h-12 rounded-xl bg-white text-[#1B5036] text-[14.5px] font-semibold flex items-center justify-center gap-2 hover:bg-[#f0faf5] transition shadow-lg"
+                >
+                  <Icon name="bell" size={17} />Suscribirme para acceder a FANI
+                </button>
+                <p className="text-center text-[11.5px] text-white/45 mt-2.5">Gratis · alertas de temporada + acceso completo a FANI</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Derecha: qué incluye */}
+          <div className="flex flex-col gap-4">
+            <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9aa79d]">Qué incluye</div>
+            {features.map(([icon, title, desc]) => (
+              <div key={title} className="bg-white rounded-2xl border border-[#E8EBE6] p-5 flex items-start gap-4 hover:border-[#c8d8cc] hover:shadow-sm transition">
+                <span className="w-10 h-10 rounded-xl bg-[#E9F1EC] flex items-center justify-center text-[#2D6A4F] shrink-0">
+                  <Icon name={icon} size={18} />
+                </span>
+                <div className="min-w-0">
+                  <div className="text-[14px] font-semibold text-[#1f2a21] leading-snug">{title}</div>
+                  <div className="text-[12px] text-[#8a948a] mt-1 leading-snug">{desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FANIChat() {
+  const [selected, setSelected] = useState([]);
+  const [extras, setExtras] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
+  const [openReceta, setOpenReceta] = useState(null);
+
+  const toggle = id => setSelected(prev => prev.includes(id) ? prev.filter(x=>x!==id) : [...prev, id]);
+  const limpiar = () => { setSelected([]); setExtras(''); setResult(null); setError(''); };
+
+  const consultar = async () => {
+    const ingredientes = [
+      ...selected.map(id=>FAN.getProduct(id)?.nombre).filter(Boolean),
+      ...extras.split(',').map(s=>s.trim()).filter(Boolean),
+    ];
+    if (!ingredientes.length) return;
+    setLoading(true); setResult(null); setError('');
+    try {
+      const res = await fetch(FANI_API_URL, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ ingredientes }),
+        signal: AbortSignal.timeout(28000),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setResult(data);
+    } catch(err) {
+      setError(err?.message || 'No se pudo consultar a FANI. Verificá el backend y la clave de Groq.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const canSubmit = (selected.length > 0 || extras.trim().length > 0) && !loading;
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1B5036] via-[#2D6A4F] to-[#74C69D] p-6 sm:p-8 text-white">
+        <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/5 pointer-events-none"></div>
+        <div className="absolute right-6 bottom-4 w-28 h-28 rounded-full bg-[#74C69D]/10 pointer-events-none"></div>
+        <div className="relative z-10 flex items-center justify-between gap-4 flex-wrap md:flex-nowrap">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
+              <Icon name="sparkles" size={22} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[23px] font-semibold tracking-tight" style={{ fontFamily:'var(--font-display)' }}>FANI</span>
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-white/20 uppercase tracking-widest">Beta</span>
+              </div>
+              <div className="text-[12px] text-white/70">Asistente culinario del bosque chiquitano</div>
+            </div>
+          </div>
+          {(result || selected.length > 0 || extras.trim()) && (
+            <button onClick={limpiar} className="flex items-center gap-1.5 text-[12px] text-white/70 hover:text-white px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 transition">
+              <Icon name="x" size={13} />Nueva consulta
+            </button>
+          )}
+        </div>
+        <p className="relative z-10 text-[13px] text-white/75 mt-3 max-w-xl leading-relaxed">
+          Seleccioná los productos del bosque que tenés disponibles y consultame — te sugiero recetas del recetario FAN que podés preparar hoy.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] lg:grid-cols-[360px_1fr] gap-6 items-start">
+        {/* Panel izquierdo: selector */}
+        <div className="space-y-4">
+          <div className="bg-white rounded-2xl border border-[#E8EBE6] p-5 space-y-4">
+            <div>
+              <h3 className="text-[15px] font-semibold text-[#1f2a21]" style={{ fontFamily:'var(--font-display)' }}>Productos del bosque</h3>
+              <p className="text-[12px] text-[#8a948a] mt-0.5">Tocá los que tenés disponibles</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {FAN.PRODUCTS.map(p=>{
+                const isOn = selected.includes(p.id);
+                const est = FAN.estadoTemporada(p);
+                return (
+                  <button key={p.id} onClick={()=>toggle(p.id)}
+                    className={cn('flex items-center gap-1.5 h-8 px-3 rounded-full text-[12px] font-medium border transition-all',
+                      isOn ? 'bg-[#2D6A4F] border-[#2D6A4F] text-white shadow-sm' : 'bg-white border-[#E2E7DE] text-[#5e6b60] hover:border-[#2D6A4F]/40 hover:bg-[#EDF2ED]')}>
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: isOn?'rgba(255,255,255,0.7)':FAN.ESTADOS[est].dot }}></span>
+                    {p.nombre}
+                    {isOn && <Icon name="check" size={11} className="opacity-80" stroke={2.5} />}
+                  </button>
+                );
+              })}
+            </div>
+            {selected.length > 0 && (
+              <div className="flex items-center justify-between">
+                <span className="text-[12px] text-[#2D6A4F] font-medium">{selected.length} seleccionado{selected.length!==1?'s':''}</span>
+                <button onClick={()=>setSelected([])} className="text-[11.5px] text-[#9aa79d] hover:text-[#5e6b60] transition">Limpiar</button>
+              </div>
+            )}
+          </div>
+
+          <div className="bg-white rounded-2xl border border-[#E8EBE6] p-5 space-y-3">
+            <div>
+              <h3 className="text-[14px] font-semibold text-[#1f2a21]">Otros ingredientes</h3>
+              <p className="text-[12px] text-[#8a948a] mt-0.5">Separalos con comas (opcional)</p>
+            </div>
+            <textarea value={extras} onChange={e=>setExtras(e.target.value)}
+              placeholder="ej: huevo, cebolla, ajo, pollo, limón..."
+              className="w-full h-24 px-3.5 py-2.5 rounded-xl border border-[#E2E7DE] text-[13.5px] text-[#1f2a21] placeholder:text-[#aab1a6] resize-none focus:outline-none focus:ring-2 focus:ring-[#2D6A4F]/20 focus:border-[#2D6A4F]/50 transition bg-[#FAFBF9]" />
+          </div>
+
+          <button onClick={consultar} disabled={!canSubmit}
+            className={cn('w-full h-12 rounded-xl text-[14.5px] font-semibold flex items-center justify-center gap-2.5 transition-all',
+              canSubmit
+                ? 'bg-gradient-to-r from-[#2D6A4F] to-[#74C69D] text-white shadow-md hover:shadow-lg hover:from-[#235741] hover:to-[#2D6A4F] active:scale-[.99]'
+                : 'bg-[#EDF2ED] text-[#9aa79d] cursor-not-allowed')}>
+            {loading ? <><Icon name="loader" size={18} className="animate-spin" />Consultando a FANI...</>
+                     : <><Icon name="sparkles" size={18} />Consultar a FANI</>}
+          </button>
+          {!canSubmit && !loading && (
+            <p className="text-center text-[11.5px] text-[#aab1a6]">Seleccioná al menos un ingrediente para consultar</p>
+          )}
+        </div>
+
+        {/* Panel derecho: resultados */}
+        <div className="bg-white rounded-2xl border border-[#E8EBE6] min-h-[380px] overflow-hidden">
+          {error && (
+            <div className="p-5 bg-[#FCF1F1] border-b border-[#F2D1D1] text-[#9A4D14]">
+              <div className="text-[14px] font-semibold">No se pudo consultar a FANI</div>
+              <div className="text-[12.5px] mt-1 leading-relaxed">{error}</div>
+            </div>
+          )}
+          {!result && !loading && !error && <FANIEmptyState />}
+          {loading && <FANILoading />}
+          {result && !loading && <div className="p-5"><FANIResult result={result} onOpenRecipe={setOpenReceta} /></div>}
+        </div>
+      </div>
+
+      <RecipeDetail receta={openReceta} onClose={()=>setOpenReceta(null)} />
+    </div>
+  );
+}
+
+function ScreenFANI({ role, onNav }) {
+  if (role !== 'suscriptor') return <FANILocked onNav={onNav} />;
+  return <FANIChat />;
+}
+
 window.PublicScreens = { ProductCard, ScreenDashboard, ScreenCatalogo, DashHero, ScreenRecetario };
-Object.assign(window, { ProductCard, ScreenDashboard, ScreenCatalogo, ScreenRecetario, RECETAS, RecipeDetail });
+Object.assign(window, { ProductCard, ScreenDashboard, ScreenCatalogo, ScreenRecetario, ScreenFANI, RECETAS, RecipeDetail });

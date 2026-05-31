@@ -139,7 +139,7 @@ function ProfileSuscriptor({ onNav, onOpen }){
 
   return (
     <div id="perfil" className="space-y-6">
-      <ProfileHeader initials={initialsFrom(d.nombre)} color="#219EBC" nombre={d.nombre} sub={`${d.rol} · ${d.empresa}`}
+      <ProfileHeader initials={initialsFrom(d.nombre)} color="#2D6A4F" nombre={d.nombre} sub={`${d.rol} · ${d.empresa}`}
         badge={<Badge className="bg-white/15 text-white mb-2"><Icon name="badge" size={13} />Suscriptor desde {me.desde}</Badge>}
         meta={<>
           <Pill icon={d.canal==='WhatsApp'?'whatsapp':'mail'}>{d.valor}</Pill>
@@ -149,7 +149,7 @@ function ProfileSuscriptor({ onNav, onOpen }){
       {/* métricas */}
       <div className="grid grid-cols-3 gap-3 sm:gap-4">
         <MiniStat icon="heart" label="En seguimiento" value={me.intereses.length} />
-        <MiniStat icon="bell" label="Alertas recibidas" value={me.alertasRecibidas} accent="#219EBC" />
+        <MiniStat icon="bell" label="Alertas recibidas" value={me.alertasRecibidas} accent="#2D6A4F" />
         <MiniStat icon="phone" label="Contactados" value={me.contactosHechos} accent="#F4A261" />
       </div>
 

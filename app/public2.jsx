@@ -215,6 +215,8 @@ function ProductorDetail({ productor, onClose, onOpen }){
   if(!productor) return null;
   const pr = productor;
   const prods = pr.productos.map(FAN.getProduct).filter(Boolean);
+  const callNumber = pr.contacto?.tel || '+591 700 00000';
+  const callHref = `tel:${String(callNumber).replace(/\s+/g, '')}`;
   return (
     <Modal open={!!productor} onClose={onClose} size="md" className="p-0">
       <div className="relative px-6 sm:px-8 pt-7 pb-6 bg-gradient-to-br from-[#2D6A4F] to-[#1f4d39] text-white">
@@ -241,15 +243,17 @@ function ProductorDetail({ productor, onClose, onOpen }){
         </div>
         <div>
           <h4 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#2D6A4F] mb-3">Productos disponibles</h4>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {prods.map(p=>{
-              const est = FAN.estadoTemporada(p);
               return (
-                <button key={p.id} onClick={()=>{ onClose(); setTimeout(()=>onOpen(p),120); }} className="flex items-center gap-2.5 border border-[#E8EBE6] rounded-xl p-2.5 hover:border-[#cfdbd1] hover:bg-[#F7FAF7] transition text-left">
-                  <ProductGlyph product={p} size={40} rounded="rounded-lg" />
-                  <div className="min-w-0">
-                    <div className="text-[13.5px] font-semibold text-[#1f2a21] truncate">{p.nombre}</div>
-                    <div className="mt-1"><StatusBadge estado={est} size="sm" /></div>
+                <button key={p.id} onClick={()=>{ onClose(); setTimeout(()=>onOpen(p),120); }} className="group relative min-h-[220px] overflow-hidden rounded-3xl border border-[#E8EBE6] bg-[#FBFCFA] text-left shadow-[0_8px_24px_rgba(45,60,45,0.08)] transition hover:-translate-y-0.5 hover:border-[#cfdbd1]">
+                  <ProductGlyph product={p} size={220} full />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#102016]/82 via-[#102016]/24 to-[#102016]/6 backdrop-blur-[1.5px]" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.14),transparent_42%)]" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                    <div className="text-[17px] sm:text-[18px] font-semibold leading-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
+                      {p.nombre}
+                    </div>
                   </div>
                 </button>
               );
@@ -260,7 +264,7 @@ function ProductorDetail({ productor, onClose, onOpen }){
           <h4 className="text-[13px] font-semibold uppercase tracking-[0.1em] text-[#2D6A4F] mb-3">Contacto directo</h4>
           <div className="grid sm:grid-cols-3 gap-2.5">
             <a href={`https://wa.me/${pr.contacto.whatsapp}`} target="_blank"><Button variant="default" className="w-full"><Icon name="whatsapp" size={16} />WhatsApp</Button></a>
-            <a href={`tel:${pr.contacto.tel}`}><Button variant="secondary" className="w-full"><Icon name="phone" size={15} />Llamar</Button></a>
+            <a href={callHref}><Button variant="secondary" className="w-full"><Icon name="phone" size={15} />Llamar {callNumber}</Button></a>
             <a href={`mailto:${pr.contacto.correo}`}><Button variant="secondary" className="w-full"><Icon name="mail" size={15} />Correo</Button></a>
           </div>
         </div>

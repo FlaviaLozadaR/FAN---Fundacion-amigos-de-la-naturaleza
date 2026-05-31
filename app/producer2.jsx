@@ -178,7 +178,7 @@ function ScreenProductor({ view='productos', subir, setSubir, estado, setEstado 
             <>
               <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 <Stat icon="eye" label="Visitas a tu perfil" value="312" delta={12} />
-                <Stat icon="phone" label="Veces contactado" value="28" delta={6} accent="#219EBC" />
+                <Stat icon="phone" label="Veces contactado" value="28" delta={6} accent="#2D6A4F" />
                 <Stat icon="package" label="Productos publicados" value={misProductos.length} accent="#F4A261" />
               </div>
               <Card className="p-6">

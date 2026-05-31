@@ -26,7 +26,7 @@ function AdminDashboard({ onTab }){
       <SectionTitle overline="Panel FAN" title="Resumen general" desc="El pulso de la plataforma: visitas, suscriptores y contactos generados hacia los productores." />
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Stat icon="eye" label="Visitas este mes" value={m.visitasMes.toLocaleString()} delta={14} />
-        <Stat icon="bell" label="Suscriptores" value={m.suscriptores.toLocaleString()} delta={7} accent="#219EBC" />
+        <Stat icon="bell" label="Suscriptores" value={m.suscriptores.toLocaleString()} delta={7} accent="#2D6A4F" />
         <Stat icon="phone" label="Contactos generados" value={m.contactosMes} delta={21} accent="#F4A261" />
         <Stat icon="users" label="Productores activos" value={`${m.productoresActivos}/${m.productores}`} accent="#6B4226" />
       </div>
@@ -51,8 +51,8 @@ function AdminDashboard({ onTab }){
               <div className="flex-1"><div className="text-[14px] font-semibold text-[#1f2a21]">{FAN.METRICAS.productosCatalogo} productos en catálogo</div><div className="text-[12px] text-[#6b756c]">Todos publicados</div></div>
             </div>
             <button onClick={()=>onTab('alertas')} className="w-full flex items-center gap-3 p-3 rounded-xl bg-[#E1F1F5] hover:brightness-[0.98] transition text-left">
-              <span className="w-9 h-9 rounded-lg bg-[#219EBC] flex items-center justify-center text-white"><Icon name="send" size={16} /></span>
-              <div className="flex-1"><div className="text-[14px] font-semibold text-[#0E5468]">Enviar alerta de temporada</div><div className="text-[12px] text-[#0E5468]/80">A {FAN.METRICAS.suscriptores.toLocaleString()} suscriptores</div></div>
+              <span className="w-9 h-9 rounded-lg bg-[#2D6A4F] flex items-center justify-center text-white"><Icon name="send" size={16} /></span>
+              <div className="flex-1"><div className="text-[14px] font-semibold text-[#1B5036]">Enviar alerta de temporada</div><div className="text-[12px] text-[#1B5036]/80">A {FAN.METRICAS.suscriptores.toLocaleString()} suscriptores</div></div>
               <Icon name="chevronRight" size={18} className="text-[#0E5468]" />
             </button>
           </div>
@@ -62,7 +62,7 @@ function AdminDashboard({ onTab }){
         <h4 className="text-[15px] font-semibold text-[#1f2a21] mb-1" style={{ fontFamily:'var(--font-display)', lineHeight:1.3 }}>Indicador de impacto</h4>
         <p className="text-[13px] text-[#8a948a] mb-4">Productos consultados y aprovechados en su temporada óptima.</p>
         <div className="grid sm:grid-cols-3 gap-4">
-          {[['Productos consultados','17 / 17','Todo el catálogo visto este mes','#2D6A4F'],['Contactos a productores',m.contactos,'Total acumulado','#F4A261'],['Conexión oferta-demanda','82%','Consultas que llegan a contacto','#219EBC']].map(([l,v,d,c])=>(
+          {[['Productos consultados','17 / 17','Todo el catálogo visto este mes','#2D6A4F'],['Contactos a productores',m.contactos,'Total acumulado','#F4A261'],['Conexión oferta-demanda','82%','Consultas que llegan a contacto','#2D6A4F']].map(([l,v,d,c])=>(
             <div key={l} className="border border-[#EEF1EC] rounded-xl p-4">
               <div className="text-[26px] font-semibold tracking-tight" style={{ fontFamily:'var(--font-display)', color:c }}>{v}</div>
               <div className="text-[13px] font-medium text-[#3a4a3f] mt-0.5">{l}</div>

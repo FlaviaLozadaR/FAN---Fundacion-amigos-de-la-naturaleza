@@ -12,7 +12,7 @@ const ESTADO_PROD = {
   PUBLICADO: { label:'Publicado', bg:'#E3F1EA', color:'#1B5036', dot:'#2D6A4F' },
   BORRADOR:  { label:'Borrador', bg:'#F1F2F1', color:'#52564F', dot:'#9CA3AF' },
   REVISION:  { label:'En revisión', bg:'#FCEFE1', color:'#9A4D14', dot:'#F4A261' },
-  PAUSADO:   { label:'Pausado', bg:'#E1F1F5', color:'#0E5468', dot:'#219EBC' }
+  PAUSADO:   { label:'Pausado', bg:'#E3F1EA', color:'#1B5036', dot:'#2D6A4F' }
 };
 
 /* ---------- Banner de estado de cuenta ---------- */

@@ -325,7 +325,7 @@ FAN.estadoTemporada = function(product, month){
 FAN.ESTADOS = {
   temporada:    { label:'En temporada',     short:'En temporada',  color:'#2D6A4F', bg:'#E3F1EA', text:'#1B5036', dot:'#2D6A4F', ring:'#74C69D' },
   terminando:   { label:'Terminando pronto', short:'Terminando',   color:'#E07B2E', bg:'#FCEFE1', text:'#9A4D14', dot:'#F4A261', ring:'#F4A261' },
-  proximamente: { label:'Próximamente',      short:'Próximamente', color:'#1B7A93', bg:'#E1F1F5', text:'#0E5468', dot:'#219EBC', ring:'#219EBC' },
+  proximamente: { label:'Próximamente',      short:'Próximamente', color:'#2D6A4F', bg:'#E3F1EA', text:'#1B5036', dot:'#2D6A4F', ring:'#74C69D' },
   fuera:        { label:'Fuera de temporada',short:'Fuera',        color:'#6B7280', bg:'#F1F2F1', text:'#52564F', dot:'#9CA3AF', ring:'#D1D5DB' }
 };
 

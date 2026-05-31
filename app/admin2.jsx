@@ -93,7 +93,7 @@ function AdminSuscriptores(){
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <Stat icon="bell" label="Total suscriptores" value={FAN.METRICAS.suscriptores.toLocaleString()} />
         <Stat icon="trending" label="Nuevos este mes" value={'+'+FAN.METRICAS.suscriptoresNuevos} accent="#74C69D" />
-        <Stat icon="whatsapp" label="Vía WhatsApp" value="58%" accent="#219EBC" />
+        <Stat icon="whatsapp" label="Vía WhatsApp" value="58%" accent="#2D6A4F" />
         <Stat icon="mail" label="Vía correo" value="42%" accent="#F4A261" />
       </div>
       <Card className="overflow-hidden">
@@ -122,7 +122,7 @@ function AdminAlertas(){
   const [tipo, setTipo] = useState('inicio');
   const [msg, setMsg] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
-  const tipos = [['inicio','Inicia temporada','#2D6A4F'],['fin','Termina pronto','#F4A261'],['productor','Nuevo productor','#219EBC']];
+  const tipos = [['inicio','Inicia temporada','#2D6A4F'],['fin','Termina pronto','#F4A261'],['productor','Nuevo productor','#2D6A4F']];
   const seleccionado = FAN.getProduct(prod);
   const alcance = seleccionado ? FAN.SUSCRIPTORES.filter(s=>s.intereses.includes(prod)).length : 0;
   const plantilla = () => {
