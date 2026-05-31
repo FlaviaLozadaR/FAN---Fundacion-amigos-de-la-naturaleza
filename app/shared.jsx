@@ -152,7 +152,9 @@ function ProductGlyph({ product, size=48, rounded='rounded-xl', full=false }){
     const src = '/' + encodeURIComponent(fileName);
     if(full){
       return (
-        <img src={src} alt={product.nombre} className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 transform will-change-transform group-hover:scale-105" />
+        <img src={src} alt={product.nombre}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 transform will-change-transform group-hover:scale-105"
+          style={{ filter: 'brightness(1.06) contrast(1.04) saturate(1.08)', willChange: 'transform, filter' }} />
       );
     }
     return (
@@ -209,7 +211,7 @@ function SeasonStrip({ product, current=FAN.CURRENT_MONTH, compact=false }){
 }
 
 /* ---------- Modal / Sheet ---------- */
-function Modal({ open, onClose, children, className='', size='md' }){
+function Modal({ open, onClose, children, className='', size='md', skipSidebar=false, fullWidth=false }){
   useEffect(()=>{
     if(!open) return;
     const onKey = e => { if(e.key==='Escape') onClose(); };
@@ -218,10 +220,26 @@ function Modal({ open, onClose, children, className='', size='md' }){
   }, [open, onClose]);
   if(!open) return null;
   const widths = { sm:'max-w-md', md:'max-w-xl', lg:'max-w-3xl', xl:'max-w-5xl' };
+  // calculate left offset to keep sidebar visible on large screens
+  let leftOffset = 0;
+  try{ if(skipSidebar && typeof window !== 'undefined' && window.innerWidth >= 1024) leftOffset = 270; }catch(e){}
+  const backdropStyle = leftOffset ? { position:'absolute', left: leftOffset, right:0, top:0, bottom:0 } : { position:'absolute', inset:0 };
+  // Bug fix: solo aplicar paddingLeft al contenedor para modales NO fullWidth.
+  // Los fullWidth usan marginLeft en innerStyle para evitar el doble offset.
+  const containerStyle = (leftOffset && !fullWidth) ? { paddingLeft: leftOffset } : {};
+  const innerStyle = fullWidth
+    ? (leftOffset ? { marginLeft: leftOffset, width: `calc(100% - ${leftOffset}px)` } : { width:'100%' })
+    : undefined;
+
+  const innerClass = cn('relative bg-white w-full shadow-2xl overflow-y-auto animate-[sheetUp_.22s_cubic-bezier(.2,.8,.2,1)]',
+    fullWidth ? 'max-w-none max-h-screen' : 'max-h-[92vh] ' + widths[size],
+    fullWidth ? 'rounded-none' : 'rounded-t-2xl sm:rounded-2xl',
+    className);
+
   return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4" >
-      <div className="absolute inset-0 bg-[#1a241c]/45 backdrop-blur-[2px] animate-[fadeIn_.18s_ease]" onClick={onClose}></div>
-      <div className={cn('relative bg-white w-full rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto animate-[sheetUp_.22s_cubic-bezier(.2,.8,.2,1)]', widths[size], className)}>
+    <div className={fullWidth ? 'fixed inset-0 z-[60] flex items-start justify-start' : 'fixed inset-0 z-[60] flex items-end sm:items-center justify-center p-0 sm:p-4'} style={containerStyle}>
+      <div className="bg-[#1a241c]/45 backdrop-blur-[2px] animate-[fadeIn_.18s_ease]" style={backdropStyle} onClick={onClose}></div>
+      <div className={innerClass} style={innerStyle}>
         {children}
       </div>
     </div>

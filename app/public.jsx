@@ -9,14 +9,15 @@ function ProductCard({ product, onOpen, compact=false }){
   const prods = FAN.productoresDe(product.id);
   return (
     <button onClick={()=>onOpen(product)}
-      className="group text-left bg-white rounded-2xl border border-[#E8EBE6] overflow-hidden shadow-[0_12px_36px_rgba(45,60,45,0.14)] hover:shadow-[0_22px_66px_rgba(45,60,45,0.20)] hover:border-[#cfdbd1] transition-transform duration-300 hover:-translate-y-1 flex flex-col">
+      className="group relative text-left bg-white rounded-2xl border border-[#E8EBE6] overflow-hidden shadow-[0_14px_40px_rgba(45,60,45,0.13)] hover:shadow-[0_22px_66px_rgba(45,60,45,0.22)] hover:border-[#cfdbd1] transition-all duration-300 hover:-translate-y-1 flex flex-col">
       <div className={"relative " + (compact? 'h-28':'h-44') + " flex items-center justify-center overflow-hidden"} style={{ background:`linear-gradient(135deg, ${product.color}26, ${product.color}14)` }}>
         <ProductGlyph product={product} size={compact?52:60} full />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 22%, rgba(0,0,0,0.06) 100%)' }}></div>
         <div className="absolute top-2.5 left-2.5"><StatusBadge estado={est} size="sm" /></div>
       </div>
       <div className="p-4 flex-1 flex flex-col">
         <div className="font-semibold text-[#1f2a21] leading-snug" style={{ fontFamily:'var(--font-display)', fontSize: compact?15:16 }}>{product.nombre}</div>
-        <div className="text-[12px] italic text-[#8a948a] mt-0.5">{product.cientifico}</div>
+        {/* Scientific name omitted from main cards; shown only in detail view */}
         <div className="mt-3 pt-3 border-t border-[#F0F2EE] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[12px] text-[#6b756c]">
           <span className="flex items-center gap-1 min-w-0 flex-1">
             <Icon name="mapPin" size={13} className="shrink-0" />
@@ -260,6 +261,7 @@ function ParaTiSection({ onOpen }){
             <button key={p.id} onClick={()=>onOpen(p)} className="group text-left bg-white rounded-2xl border border-[#cfe3d6] overflow-hidden shadow-[0_12px_36px_rgba(45,60,45,0.14)] hover:shadow-[0_22px_66px_rgba(45,60,45,0.20)] transition-all hover:-translate-y-0.5 flex flex-col ring-1 ring-[#2D6A4F]/5">
               <div className="relative h-36 sm:h-44 overflow-hidden" style={{ background:`linear-gradient(135deg, ${p.color}26, ${p.color}14)` }}>
                 <ProductGlyph product={p} full />
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 22%, rgba(0,0,0,0.05) 100%)' }}></div>
                 <div className="absolute top-2.5 left-2.5"><StatusBadge estado={est} size="sm" /></div>
                 <div className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-white/80 flex items-center justify-center text-[#2D6A4F]"><Icon name="heart" size={13} /></div>
               </div>
@@ -356,7 +358,7 @@ function ScreenCatalogo({ onOpen }){
                 <ProductGlyph product={p} size={48} />
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold text-[#1f2a21]" style={{ fontFamily:'var(--font-display)', lineHeight:1.3 }}>{p.nombre}</div>
-                  <div className="text-[12px] text-[#8a948a] truncate">{p.tipo} · {p.cientifico}</div>
+                  <div className="text-[12px] text-[#8a948a] truncate">{p.tipo}</div>
                 </div>
                 <StatusBadge estado={est} size="sm" />
                 <Icon name="chevronRight" size={18} className="text-[#c2cbc3]" />
@@ -436,6 +438,314 @@ const RECETAS = [
     ],
     notas: 'Imagen proporcionada por el usuario en public/recetario.'
   }
+  ,{
+    id: 'ceviche-tarwi-leche-almendra',
+    titulo: 'CEVICHE DE TARWI CON LECHE DE ALMENDRA CHIQUITANA',
+    autores: 'E. Caupi, C. Condarco, M. Cepiz, N. Velasco, M. Taha (Grupo 1, Instituto CEFIM)',
+    imagen: '/recetario/CEVICHE%20DE%20TARWI%20CON%20LECHE%20DE%20ALMENDRA%20CHIQUITANA.png',
+    ingredientes: {
+      leche: ['200 g de motacú','10 g de almendra chiquitana','200 ml de agua hervida'],
+      tarwi: ['80 g de mote de tarwi','½ limón','1 rama de cilantro','Sal al gusto','K\'oa (para ahumar)'],
+      decoracion: ['Chilto','Almendra chiquitana picada','Hojas de cilantro']
+    },
+    preparacion: [
+      'Procesar el motacú y la almendra chiquitana con agua hervida. Filtrar y reservar para la leche.',
+      'En una olla colocar k\'oa, quemar y colocar el tarwi, tapar la olla y ahumar unos minutos.',
+      'Mezclar el tarwi ahumado con el jugo de limón, cilantro picado finamente, sal a gusto y la leche de motacú y almendra previamente reservada.',
+      'Emplatar y decorar con hojas de cilantro, chilto y almendra chiquitana picada.'
+    ],
+    notas: 'Imagen provista en public/recetario.'
+  }
+  ,{
+    id: 'choka-aji-almendra',
+    titulo: "CH´OKA Y AJÍ DE ALMENDRA CHIQUITANA",
+    autores: 'R. Muñecas, A. Cruz, M. Mendoza, D. Canedo, G. Chevez, C. Camacho (Grupo 4, Instituto CEFIM)',
+    imagen: '/recetario/CH%C2%B4OKA%20Y%20AJ%C3%8D%20DE%20ALMENDRA%20CHIQUITANA.png',
+    ingredientes: {
+      choka: ['1 pierna de ch\'oka','Hierbas aromáticas (perejil, romero, cilantro)','20 g de maicena','1 huevo','30 g de harina de yuca','Abundante aceite para fritura'],
+      salsa: ['80 g de almendra chiquitana','1 ají amarillo en vaina','½ cebolla morada','Sal y pimienta'],
+      pastelChuño: ['60 g de chuño remojado','1 huevo','1 diente de ajo','Sal y pimienta']
+    },
+    preparacion: [
+      'Para la ch\'oka: Sellar la ch\'oka en una cacerola; colocar en olla a presión con abundante agua y bouquet garni. Cocinar 30 minutos.',
+      'Pasar por maicena, huevo y harina de yuca; freír en abundante aceite.',
+      'Para la salsa de ají de almendra: Brasear o asar la vaina de ají; licuar con la cebolla, la almendra chiquitana, sal y pimienta.',
+      'Pasar la mezcla a una cacerola y cocinar a fuego medio hasta obtener textura adecuada.',
+      'Para el pastel de chuño: Licuar el chuño y el ajo con un poco de agua; filtrar y salpimentar.',
+      'Integrar con el huevo batido; colocar en bandeja enmantequillada y hornear a 160ºC por 30–35 minutos.'
+    ],
+    notas: 'Imagen en public/recetario tal como indicó el usuario.'
+  }
+  ,{
+    id: 'chancho-pasoca-mangaba',
+    titulo: 'CHANCHO RELLENO DE PASOCA CON SALSA DE MANGABA Y CERVEZA',
+    autores: 'M. Meneces, Y. Bernal, F. Montaño, A. Flores, C. Rojas, M. López y otros (Grupos 2 y 3, Instituto Tatapy)',
+    imagen: '/recetario/CHANCHO%20RELLENO%20DE%20PASOCA%20CON%20SALSA%20DE%20MANGABA%20Y%20CERVEZA.png',
+    ingredientes: {
+      carne: ['1 lomo de cerdo','2 cdas de mostaza','1 cda de ajo en polvo','1 cda de pimienta negra molida','1 cdta de sal','Cordel para bridar'],
+      relleno: ['1½ taza de harina de yuca','¼ taza de pasas','¼ taza de aceitunas verdes sin semilla','200 g de charque cocido y deshilachado','4 cdas de mantequilla'],
+      salsa: ['1½ taza de pulpa de mangaba','1½ taza de cerveza oscura','6 cdas de azúcar','1 cebolla morada pequeña','2 dientes de ajo','5 g de jengibre fresco','4 cdas de salsa soya','Mantequilla al gusto','Maicena al gusto']
+    },
+    preparacion: [
+      'Para el relleno: Hidratar las pasas por 30 minutos.',
+      'En un sartén colocar la mantequilla a fuego medio; agregar el charque y la harina de yuca.',
+      'Retirar del fuego y agregar las pasas y las aceitunas. Reservar.',
+      'Para la carne: Cortar el lomo de cerdo en una sola lámina de 1–2 cm de grosor con mucho cuidado.',
+      'Condimentar con sal, pimienta, ajo y comino por un lado; colocar el relleno sobre el lado condimentado.',
+      'Envolver y bridar con cordel; untar la mostaza y hornear a 170ºC por ~35 minutos.',
+      'Para la salsa: Picar la cebolla y el ajo; rehogar con mantequilla a fuego medio.',
+      'Agregar jengibre rallado y azúcar; añadir la cerveza, la pulpa de mangaba y la salsa soya.',
+      'Condimentar y espesar con maicena diluida si es necesario; servir sobre el rollo de cerdo en láminas.'
+    ],
+    notas: 'Imagen en public/recetario tal como indicó el usuario.'
+  }
+  ,{
+    id: 'crema-chuno',
+    titulo: 'CREMA DE CHUÑO',
+    autores: 'R. Muñecas, A. Cruz, M. Mendoza, D. Canedo, G. Chevez y C. Camacho (Grupo 4, Instituto CEFIM)',
+    imagen: '/recetario/CREMA%20DE%20CHU%C3%91O.png',
+    ingredientes: {
+      fondo: ['200 g de charque','1 zanahoria pequeña','1 cebolla morada pequeña','1 rama de apio','1 rama de perejil','1 rama de hierbabuena','1 rama de k´oa'],
+      crema: ['250 g de chuño sancochado','30 g de crema de leche','10 g de mantequilla','Sal, pimienta y comino'],
+      decoracion: ['Harina de yuca','Aceite de oliva aromatizado con k´oa','Charque desmenuzado y frito']
+    },
+    preparacion: [
+      'En una cacerola, añadir los ingredientes del fondo con 500 ml de agua, llevar a fuego medio y dejar reducir para extraer sabores y aromas.',
+      'Cocinar el chuño previamente remojado hasta que adquiera un color más oscuro. Licuar el chuño cocido con la mitad del fondo hasta obtener una mezcla suave y homogénea.',
+      'Verter la mezcla licuada en una olla; agregar la crema de leche y la mantequilla, salpimentar. Dejar hervir a fuego medio por 15 minutos.',
+      'Emplatar con harina de yuca, charque por encima y poner unas gotas de aceite de k´oa.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'crema-totai-cuy',
+    titulo: 'CREMA DE TOTAÍ EN BASE DE CUY',
+    autores: 'M. Concha, C. Mendoza, M. Cayú, N. Mendoza, W. Conraddy, S. Loza y A. Hinojosa (Grupo 3, Instituto CEFIM)',
+    imagen: '/recetario/CREMA%20DE%20TOTA%C3%8D%20EN%20BASE%20DE%20CUY.png',
+    ingredientes: {
+      lista: ['300 ml de fondo de cuy','1 zanahoria','1 pimiento morrón pequeño','1 puño de habas peladas','200 g de harina de totaí','3 papas medianas','2 dientes de ajo','½ cebolla morada','1 tallo de apio','2 hojas de laurel','Orégano, sal, agua']
+    },
+    preparacion: [
+      'Llevar todo a una cacerola para su cocción.',
+      'Retirar del fuego y dejar enfriar.',
+      'Filtrar y procesar lo sólido agregando lo necesario de jugo hasta lograr una consistencia cremosa.',
+      'Llevar nuevamente a fuego bajo y remover constantemente por alrededor de 15 minutos.',
+      'Servir caliente.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'ensalada-totai-manga-almendra',
+    titulo: 'ENSALADA CHIQUITANA DE TOTAÍ, MANGA VERDE Y ALMENDRA CHIQUITANA',
+    autores: 'J. Canedo y C. Camacho',
+    imagen: '/recetario/ENSALADA CHIQUITANA DE TOTAÍ, MANGA VERDE Y ALMENDRA CHIQUITANA.png',
+    ingredientes: {
+      lista: ['2 mangas verdes (pintonas)','1 cebolla blanca grande','10 totaíses, pelados y despepados (sin semilla)','10 almendras chiquitanas remojadas y peladas','Zumo de 2 limones grandes','Aceite vegetal de buena calidad','Vinagre','Sal y pimienta']
+    },
+    preparacion: [
+      'Pelar las mangas y cortarlas en julianas.',
+      'Picar la cebolla en pluma y remojar en abundante agua.',
+      'Picar los totaíses en julianas.',
+      'Laminar las almendras y tostarlas.',
+      'Preparar una vinagreta con zumo de limón, aceite, vinagre, sal y pimienta.',
+      'En un bowl colocar los ingredientes y aliñarlos con la vinagreta.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'fricase-pollo-almendra',
+    titulo: 'FRICASÉ DE POLLO Y ALMENDRA CHIQUITANA',
+    autores: 'J. Zeballos, P. Aiarachi, M. Aguilar, Y. Dorado, E. Pérez y M. Fernández (Grupo 2, Instituto CEFIM)',
+    imagen: '/recetario/FRICAS%C3%89%20DE%20POLLO%20Y%20ALMENDRA%20CHIQUITANA.png',
+    ingredientes: {
+      lista: ['2 presas de pollo (pierna y entrepierna)','1 zanahoria','3 dientes de ajo','Sal, pimienta, comino','2 ajíes amarillos en vaina','1 puñado de almendra chiquitana pelada','200 g de chuño remojado','300 g de mote','1 rama de hierbabuena']
+    },
+    preparacion: [
+      'Sellar las presas de pollo.',
+      'Sofreír el ajo picado y la zanahoria rallada; agregar el ají amarillo procesado y salpimentar.',
+      'Aromatizar con la hierbabuena; agregar la almendra chiquitana procesada con agua y dejar cocinar durante 30 minutos.',
+      'Acompañar con chuño cocido y mote.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'lomo-llama-asai-racacha-totai',
+    titulo: 'LOMO DE LLAMA EN SALSA DE ASAÍ CON PURÉ DE RACACHA Y TOTAÍ',
+    autores: 'M. Concha, C. Mendoza, M. Cayú, N. Mendoza, W. Conraddy, S. Loza, A. Hinojosa (Grupo 3, Instituto CEFIM)',
+    imagen: '/recetario/LOMO%20DE%20LLAMA%20EN%20SALSA%20DE%20ASA%C3%8D%20CON%20PUR%C3%89%20DE%20RACACHA%20Y%20TOTA%C3%8D.png',
+    ingredientes: {
+      carne: ['200 g de lomo de llama','Sal, pimienta, comino, aceite'],
+      pure: ['2 racachas cocidas','60 g de harina de totaí','5 g de urucú','Aceite'],
+      salsa: ['100 g de pulpa de asaí','Fondo de llama','Sal, pimienta, comino']
+    },
+    preparacion: [
+      'Para la carne: Condimentar el lomo de llama con sal, pimienta y comino; asar en sartén con un chorro de aceite.',
+      'Para el puré de racacha y totaí: Teñir aceite con urucú a fuego bajo; pasar la racacha por un colador y mezclar con la harina de totaí, aceite de urucú y agua; remover hasta textura deseada; salpimentar.',
+      'Para la salsa de asaí: Colocar la pulpa de asaí y agregar fondo de llama hasta alcanzar textura deseada; salpimentar y añadir una pizca de comino.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'pacumutu-llama-aji-almendra',
+    titulo: 'PACUMUTU DE LLAMA Y AJÍ DE ALMENDRA CHIQUITANA',
+    autores: 'R. Muñecas, A. Cruz, M. Mendoza, D. Canedo, G. Chevez y C. Camacho (Grupo 4, Instituto CEFIM)',
+    imagen: '/recetario/PACUMUTU DE LLAMA Y AJÍ DE ALMENDRA CHIQUITANA.png',
+    ingredientes: {
+      pacumutu: ['200 g de filete de llama','½ pimiento morrón','½ cebolla morada','2 dientes de ajo','Sal, pimienta','Pinchos de madera'],
+      ají: ['40 g de almendra chiquitana','1 ají amarillo en vaina','10 g de cebolla braseada','Pimienta y sal']
+    },
+    preparacion: [
+      'Cortar el filete de llama en cubos de 3–4 cm; cortar la cebolla y el pimiento en cubos similares.',
+      'En un recipiente combinar los insumos y adobar con ajo picado, sal y pimienta.',
+      'Insertar en pinchos de madera (previamente remojados) intercalando los ingredientes.',
+      'Asar los pacumutus en sartén o parrilla hasta punto deseado.',
+      'Para el ají: procesar los ingredientes, filtrar y cocinar a fuego medio hasta obtener la textura deseada; servir los pacumutus bañados con la salsa.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'ravioles-paiche-pesto-almendra',
+    titulo: 'RAVIOLES DE PAICHE CON SALSA PESTO DE ALMENDRA CHIQUITANA',
+    autores: 'N. Calustro, E. Moreito, R. Cuevas, R. Tuco, P. Céspedes, N. Mendoza y otros (Grupo 1, Instituto Tatapy)',
+    imagen: '/recetario/RAVIOLES DE PAICHE CON SALSA PESTO DE ALMENDRA CHIQUITANA.png',
+    ingredientes: {
+      pasta: ['200 g de harina dura de trigo','50 g de harina de almendra chiquitana','2 huevos enteros','2 cdas de aceite de oliva','Pizca de sal'],
+      relleno: ['400 g de filete de paiche cocido con guarniciones aromáticas','6 tallos de perejil','5 tallos de cebolla de verdeo','8 cdas de nata fresca','Sal y pimienta'],
+      pesto: ['1 taza de almendras chiquitanas crudas, remojadas y peladas','½ taza de aceite de oliva','4 manojos de hojas de albahaca','10 dientes de ajo pelados y remojados','1½ taza de queso parmesano rallado','Sal y pimienta']
+    },
+    preparacion: [
+      'Para la pasta: Mezclar harina de trigo, harina de almendra, huevos, sal y aceite; integrar hasta formar masa y dejar reposar 1 hora cubierta.',
+      'Para el relleno: Procesar el paiche cocido con perejil y nata; agregar la cebolla de verdeo picada; salpimentar y reservar.',
+      'Para la salsa pesto: Tostar ligeramente las almendras en aceite; picar albahaca, ajo y almendra tostada; mezclar con aceite de oliva y luego integrar el queso parmesano; salpimentar.',
+      'Estirar la masa y formar ravioles rellenando con la mezcla de paiche; cocinar en agua hirviendo hasta que floten (~20–30 seg).',
+      'Saltear los ravioles brevemente en la salsa pesto caliente y servir con queso parmesano rallado y un chorro de aceite de oliva.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'sopa-almendra-llama',
+    titulo: 'SOPA DE ALMENDRA CHIQUITANA Y LLAMA',
+    autores: 'M. Concha, C. Mendoza, M. Cayú, N. Mendoza, W. Conraddy, S. Loza, A. Hinojosa (Grupo 3, Instituto CEFIM)',
+    imagen: '/recetario/SOPA DE ALMENDRA CHIQUITANA Y LLAMA.png',
+    ingredientes: {
+      lista: ['3 papas','1 cebolla mediana','1 tallo de apio','2 zanahorias medianas','150 g de almendra chiquitana','200 g de carne de llama','Fondo de llama (caldo donde coció la llama)']
+    },
+    preparacion: [
+      'En una cacerola con un chorrito de aceite, colocar la carne de llama troceada, la cebolla, el apio y una zanahoria picados para sellar.',
+      'Poner todo en una olla a presión con abundante agua y cocinar 30 minutos.',
+      'Filtrar el fondo y reservar.',
+      'Procesar la almendra chiquitana.',
+      'Picar la zanahoria restante y las papas en julianas e incorporar, junto con la almendra procesada, al fondo reservado.',
+      'Cocinar hasta que las verduras estén tiernas y servir caliente.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'tartar-trucha-almendra',
+    titulo: 'TARTAR DE TRUCHA Y ALMENDRA CHIQUITANA',
+    autores: 'R. Muñecas, A. Cruz, M. Mendoza, D. Canedo, G. Chevez, C. Camacho (Grupo 4, Instituto CEFIM)',
+    imagen: '/recetario/TARTAR DE TRUCHA Y ALMENDRA CHIQUITANA.png',
+    ingredientes: {
+      trucha: ['120 g de trucha limpia','½ limón','12 almendras chiquitanas','½ cda de aceite de oliva','Sal y pimienta','Hojas de k´oa'],
+      emulsion: ['70 g de tarwi','3 cdas de aceite de oliva','Zumo de ½ limón','Pimienta y sal']
+    },
+    preparacion: [
+      'Mezclar aceite de oliva, zumo de limón, hojas de k´oa, sal y pimienta; incorporar la trucha picada en cubos muy pequeños y refrigerar 1 hora cubierta.',
+      'Pelar y picar las almendras en trozos pequeños para agregar al tartar minutos antes de servir.',
+      'Para la emulsión: pelar el tarwi, procesar en licuadora e integrar poco a poco el aceite, el limón, sal y pimienta hasta emulsionar.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'tierra-viva-crema-almendra',
+    titulo: 'TIERRA VIVA (CREMA DE ALMENDRA CHIQUITANA)',
+    autores: 'J. Zeballos, P. Aiarachi, M. Aguilar, Y. Dorado, E. Pérez y M. Fernández (Grupo 2, Instituto CEFIM)',
+    imagen: '/recetario/TIERRA VIVA (CREMA DE ALMENDRA CHIQUITANA).png',
+    ingredientes: {
+      lista: ['400 g de almendra chiquitana','1 cebolla morada','2 dientes de ajo','2 ramas de perejil','1 pimiento morrón','1 cdta de comino','1 cdta de pimienta','1 ají amarillo en vaina','1 zanahoria','100 ml de crema de leche','1 cda de mantequilla','2 litros de fondo de verduras','2 cdas de maicena','Aceite','1 papa mediana, llullucha, amaranto']
+    },
+    preparacion: [
+      'Licuar la cebolla, el ajo, el pimiento morrón, la zanahoria y los condimentos; llevar a rehogar.',
+      'Agregar 2 litros de fondo de verduras y hervir 20–25 minutos.',
+      'Agregar la almendra procesada con agua, la crema de leche, la mantequilla y la maicena diluida; dejar hervir a fuego bajo hasta que espese.',
+      'Añadir la crema de almendras; servir acompañado de papas fritas, llullucha cruda troceada y amaranto tostado.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'pescado-motacu',
+    titulo: 'PESCADO CON SALSA DE SEMILLAS DE MOTACÚ',
+    autores: 'J. Canedo y C. Camacho',
+    imagen: '/recetario/PESCADO CON SALSA DE SEMILLAS DE MOTACÚ.png',
+    ingredientes: {
+      pescado: ['4 filetes de paiche (~200 g cada uno)','Zumo de 3 limones grandes','8 dientes de ajo','1 manojo de cilantro','Aceite vegetal de buena calidad'],
+      verduras: ['1 cebolla morada','1 morrón rojo','1 morrón verde','2 cdas de pasta de tomate'],
+      motacu: ['1 taza de semilla de motacú (remojada) + ¼ taza para decorar','Sal, pimienta y comino al gusto']
+    },
+    preparacion: [
+      'Marinar los filetes de paiche con parte del zumo de limón, 4 dientes de ajo picados, sal, pimienta y comino por ~30 minutos.',
+      'Licuar una taza de semillas de motacú remojadas; filtrar y reservar la leche.',
+      'Rehogar la cebolla, la pasta de tomate y los morrones cortados en juliana; añadir el resto del ajo y sofreír un minuto más.',
+      'Verter la leche de motacú y calentar; agregar los filetes y cocer ~5 minutos por lado.',
+      'Incorporar el resto del zumo de limón, la semilla de motacú rallada y el cilantro picado; integrar y servir con arroz blanco y plátano verde frito.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'pollo-majo-almendra',
+    titulo: 'POLLO CON SALSA DE MAJO Y ALMENDRA CHIQUITANA',
+    autores: 'J. Canedo y C. Camacho',
+    imagen: '/recetario/POLLO CON SALSA DE MAJO Y ALMENDRA CHIQUITANA.png',
+    ingredientes: {
+      pollo: ['1 pollo troceado','2 cebollas moradas grandes','6 dientes de ajo','30 almendras chiquitanas crudas, remojadas y peladas','1 taza de vino blanco','1 taza de leche de majo','Manteca o aceite','Sal, pimienta y comino al gusto']
+    },
+    preparacion: [
+      'Trocear el pollo y condimentar con sal, pimienta y comino.',
+      'Sellar la carne en una olla con aceite o manteca y reservar.',
+      'Hacer un ahogado con las cebollas y los ajos picados en cubitos en la misma olla.',
+      'Verter el vino y luego la leche de majo; tapar y bajar el fuego al mínimo.',
+      'Laminar las almendras y tostarlas en sartén; incorporarlas a la preparación.',
+      'Servir acompañado de arroz y yuca.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'pato-pipian-almendra',
+    titulo: 'PATO CON SALSA PIPIÁN DE ALMENDRA CHIQUITANA',
+    autores: 'J. Canedo y C. Camacho',
+    imagen: '/recetario/PATO CON SALSA PIPIÁN DE ALMENDRA CHIQUITANA.png',
+    ingredientes: {
+      pato: ['1 pato troceado','Caldo para cocer el pato (manteca, 1 cebolla morada, 2 tallos de apio, 2 zanahorias, laurel y pimienta en grano)'],
+      pipian: ['500 g de almendra chiquitana tostada','8 dientes de ajo','3 cebollas moradas','3 morrones rojos','5 ajíes dulces','Sal, pimienta molida, comino','Manteca de urucú'],
+      acompanamiento: ['Arroz y yuca para acompañar']
+    },
+    preparacion: [
+      'Hervir el pato en una olla con un poco de manteca y abundante agua. Una vez cocida la carne, retirar el pato, cernir y reservar el caldo.',
+      'Picar las cebollas moradas, los dientes de ajo, los morrones y el ají dulce y hacer un ahogado con la manteca de urucú.',
+      'Licuar los 500 g de almendra chiquitana con el caldo de pato y reservar.',
+      'Cuando las verduras estén translúcidas, licuarlas con el caldo de pato y volver a colocar en la olla junto a la almendra procesada.',
+      'Poner a fuego bajo y agregar las piezas de pato, sal, pimienta, comino y caldo necesario hasta integrar sabores.',
+      'Servir con arroz blanco y yuca cocida o frita.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
+  ,{
+    id: 'paiche-frito-asaí',
+    titulo: 'PAICHE FRITO EN SALSA AGRIDULCE DE ASAÍ',
+    autores: 'Comunidad Porvenir (taller desarrollado en la comunidad Porvenir, Bajo Paraguá)',
+    imagen: '/recetario/PAICHE FRITO EN SALSA AGRIDULCE DE ASAÍ.png',
+    ingredientes: {
+      paiche: ['1 kg de paiche','4 dientes de ajo','1 cda de orégano seco','2 cdas de vinagre de frutas','Sal, pimienta y comino al gusto','Harina y maicena para rebozar','Aceite para freír'],
+      salsa: ['1 cebolla morada','4 dientes de ajo','300 g de papaya pintona','2 tazas de pulpa de asaí','2 cdas de vinagre de frutas','Sal, pimienta y comino al gusto']
+    },
+    preparacion: [
+      'Trocear el paiche en cubos de ~2 cm y marinar con ajo picado, orégano, vinagre, pimienta, comino y sal (40 minutos o idealmente 12 horas).',
+      'Mezclar harina con maicena, sal y pimienta; rebozar los trozos de paiche y freír en abundante aceite caliente.',
+      'Para la salsa: picar cebolla y ajos; rehogar en aceite hasta translúcidos; agregar papaya rallada, pulpa de asaí, vinagre y condimentar; cocinar a fuego bajo hasta integrar.',
+      'Servir la salsa sobre el pescado frito; acompañar con plátano y yuca frita si se desea.'
+    ],
+    notas: 'Imagen en public/recetario.'
+  }
 ];
 
 function RecipeDetail({ receta, onClose }){
@@ -489,8 +799,9 @@ function ScreenRecetario(){
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {RECETAS.map(r=> (
           <button key={r.id} onClick={()=>setOpen(r)} className="text-left bg-white rounded-2xl border border-[#E8EBE6] overflow-hidden shadow-[0_6px_20px_rgba(45,60,45,0.06)] hover:shadow-[0_10px_30px_rgba(45,60,45,0.08)] transition">
-            <div className="h-36 bg-[#F3F6F3] flex items-center justify-center overflow-hidden">
-              <img src={r.imagen} alt={r.titulo} className="w-full h-full object-cover" />
+            <div className="h-36 bg-[#F3F6F3] flex items-center justify-center overflow-hidden relative">
+              <img src={r.imagen} alt={r.titulo} className="w-full h-full object-cover" style={{ filter: 'brightness(1.04) contrast(1.03) saturate(1.05)' }} />
+              <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 22%, rgba(0,0,0,0.04) 100%)' }}></div>
             </div>
             <div className="p-3">
               <div className="font-semibold text-[#1f2a21]">{r.titulo}</div>
@@ -506,4 +817,4 @@ function ScreenRecetario(){
 }
 
 window.PublicScreens = { ProductCard, ScreenDashboard, ScreenCatalogo, DashHero, ScreenRecetario };
-Object.assign(window, { ProductCard, ScreenDashboard, ScreenCatalogo, ScreenRecetario });
+Object.assign(window, { ProductCard, ScreenDashboard, ScreenCatalogo, ScreenRecetario, RECETAS, RecipeDetail });
