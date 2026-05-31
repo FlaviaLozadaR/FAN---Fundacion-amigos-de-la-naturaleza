@@ -4,28 +4,27 @@
 
 const ROLES = {
   visitante: { label:'Visitante', desc:'Chef o curioso — sin registro', icon:'user', color:'#2D6A4F' },
-  suscriptor:{ label:'Suscriptor', desc:'Recibe alertas y recomendaciones', icon:'bell', color:'#2D6A4F' },
+  suscriptor:{ label:'Suscriptor', desc:'Recibe alertas y recomendaciones', icon:'bell', color:'#219EBC' },
   productor: { label:'Productor', desc:'Comunidad o asociación del bosque', icon:'sprout', color:'#6B4226' },
   admin:     { label:'Admin FAN', desc:'Equipo FAN — acceso total', icon:'shield', color:'#1B5036' }
 };
 
 const NAV = {
-  visitante: [['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map'],['fani','FANI','sparkles']],
-  suscriptor:[['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map'],['fani','FANI','sparkles'],['mi-suscripcion','Mi suscripción','heart']],
-  productor: [['productos','Mis productos','package'],['metricas','Métricas','chart']],
-  admin:     [['resumen','Resumen','home'],['aprobaciones','Productores','users'],['productos','Catálogo','package'],['temporadas','Temporadas','calendar'],['suscriptores','Suscriptores','bell'],['alertas','Enviar alertas','send']]
+  visitante: [['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map']],
+  suscriptor:[['dashboard','Inicio','home'],['catalogo','Catálogo','grid'],['recetario','Recetario','book'],['mapa','Procedencia','map'],['mi-suscripcion','Mi suscripción','heart']],
+  productor: [['inicio','Inicio','home'],['productos','Mis productos','package'],['metricas','Interés generado','eye']],
+  admin:     [['resumen','Resumen','home'],['aprobaciones','Productores','users'],['productos','Catálogo','package'],['temporadas','Temporadas','calendar'],['suscriptores','Suscriptores','bell'],['alertas','Enviar alertas','send'],['recetas','Recetario','book']]
 };
-const DEFAULT_VIEW = { visitante:'dashboard', suscriptor:'dashboard', productor:'productos', admin:'resumen' };
+const DEFAULT_VIEW = { visitante:'dashboard', suscriptor:'dashboard', productor:'inicio', admin:'resumen' };
 
 function personaDe(role){
-  if(role==='suscriptor'){ const m=FAN.ME_SUSCRIPTOR; return { nombre:m.nombre, sub:m.rol, iniciales:m.iniciales, color:'#2D6A4F' }; }
+  if(role==='suscriptor'){ const m=FAN.ME_SUSCRIPTOR; return { nombre:m.nombre, sub:m.rol, iniciales:m.iniciales, color:'#219EBC' }; }
   if(role==='productor'){ const p=FAN.getProductor('sabores-chiquitos'); return { nombre:p.nombre, sub:p.tipo, iniciales:p.iniciales, color:'#6B4226' }; }
   if(role==='admin'){ const a=FAN.ME_ADMIN; return { nombre:a.nombre, sub:a.cargo, iniciales:a.iniciales, color:'#1B5036' }; }
   return { nombre:'Invitado', sub:'Sin registro', iniciales:'?', color:'#9CA3AF' };
 }
 
 function LogoFAN({ light=false }){
-  // Render only the logo image, filling the header area (no visible text)
   return (
     <div className="flex-1 h-full flex items-center justify-center">
       <img src="/Logo.png" alt="Fundación Amigos de la Naturaleza" style={{ width: 'auto', maxWidth: '85%', maxHeight: 56, objectFit: 'contain', objectPosition: 'center' }} />
@@ -33,7 +32,6 @@ function LogoFAN({ light=false }){
   );
 }
 
-/* ---------- Menú de cambio de rol (demo) ---------- */
 function RoleMenu({ role, setRole }){
   const [open, setOpen] = useState(false);
   return (
@@ -46,7 +44,7 @@ function RoleMenu({ role, setRole }){
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={()=>setOpen(false)}></div>
-          <div className="absolute bottom-12 left-0 right-0 bg-white rounded-2xl border border-[#E8EBE6] shadow-xl z-50 p-2 animate-[sheetUp_.16s_ease]">
+          <div className="absolute bottom-12 left-0 right-0 bg-white rounded-2xl border border-[#E8E6E8] shadow-xl z-50 p-2 animate-[sheetUp_.16s_ease]">
             <div className="px-2.5 py-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-[#9aa79d]">Demostración de roles</div>
             {Object.entries(ROLES).map(([k,v])=>(
               <button key={k} onClick={()=>{ setRole(k); setOpen(false); }} className={cn('w-full flex items-center gap-2.5 p-2 rounded-xl transition text-left', role===k?'bg-[#EDF2ED]':'hover:bg-[#F4F7F4]')}>
@@ -62,14 +60,12 @@ function RoleMenu({ role, setRole }){
   );
 }
 
-/* ---------- Sidebar ---------- */
 function Sidebar({ role, setRole, view, setView, open, setOpen }){
   const nav = NAV[role];
   const persona = personaDe(role);
   const go = v => { setView(v); setOpen(false); };
   return (
     <>
-      {/* backdrop móvil */}
       {open && <div className="fixed inset-0 bg-[#1a241c]/40 z-40 lg:hidden" onClick={()=>setOpen(false)}></div>}
       <aside className={cn(
         'fixed lg:sticky top-0 left-0 z-50 h-screen w-[270px] bg-[#FCFDFB] border-r border-[#E8EBE6] flex flex-col transition-transform duration-300 shrink-0',
@@ -79,44 +75,24 @@ function Sidebar({ role, setRole, view, setView, open, setOpen }){
           <LogoFAN />
           <button onClick={()=>setOpen(false)} className="lg:hidden w-8 h-8 rounded-lg hover:bg-[#EDF2ED] flex items-center justify-center text-[#5e6b60]"><Icon name="x" size={18} /></button>
         </div>
-
-        {/* contexto de rol */}
         <div className="px-4 pt-4 pb-2">
           <div className="flex items-center gap-2 px-2.5 py-2 rounded-lg" style={{ background: ROLES[role].color+'14' }}>
             <span className="w-6 h-6 rounded-md flex items-center justify-center text-white shrink-0" style={{ background:ROLES[role].color }}><Icon name={ROLES[role].icon} size={13} /></span>
             <span className="text-[12.5px] font-semibold" style={{ color:ROLES[role].color }}>Vista: {ROLES[role].label}</span>
           </div>
         </div>
-
-        {/* navegación */}
         <nav className="flex-1 overflow-y-auto px-3 py-1 space-y-1">
           {nav.map(([v,l,ic])=>{
-            const active = view===v;
+            const active = view===v || (v==='productos' && view==='ver-producto') || (v==='recetas' && view==='ver-receta');
             const badge = role==='admin' && v==='aprobaciones' && FAN.METRICAS.pendientes>0 ? FAN.METRICAS.pendientes : null;
-            const isFani = v==='fani';
-            const faniLocked = isFani && role==='visitante';
             return (
               <button key={v} onClick={()=>go(v)} className={cn('w-full flex items-center gap-3 px-3 h-11 rounded-xl text-[14.5px] font-medium transition', active?'bg-[#2D6A4F] text-white shadow-sm':'text-[#5e6b60] hover:bg-[#EDF2ED] hover:text-[#2D6A4F]')}>
                 <Icon name={ic} size={18} />{l}
                 {badge && <span className={cn('ml-auto text-[11px] font-bold px-1.5 rounded-full', active?'bg-white/20':'bg-[#F4A261] text-white')}>{badge}</span>}
-                {isFani && !active && !badge && (
-                  <span className={cn('ml-auto text-[9.5px] font-bold px-1.5 py-0.5 rounded-full',
-                    faniLocked
-                      ? 'bg-[#EDF2ED] text-[#9aa79d]'
-                      : 'text-white')}
-                    style={!faniLocked ? { background:'linear-gradient(135deg,#2D6A4F,#0E7490)' } : {}}>
-                    {faniLocked ? 'sub.' : 'IA'}
-                  </span>
-                )}
-                {isFani && active && (
-                  <span className="ml-auto text-[9.5px] font-bold px-1.5 py-0.5 rounded-full bg-white/20 text-white">IA</span>
-                )}
               </button>
             );
           })}
         </nav>
-
-        {/* tarjeta de usuario + cambio de rol */}
         <div className="px-3 pb-4 pt-2 border-t border-[#EDF0EB] space-y-2.5 shrink-0">
           {role==='visitante' && (
             <button onClick={()=>go('suscripcion')} className={cn('w-full flex items-center justify-center gap-2 h-11 rounded-xl text-[14px] font-semibold transition', view==='suscripcion'?'bg-[#235741] text-white':'bg-[#2D6A4F] text-white hover:bg-[#235741] shadow-sm')}>
@@ -151,18 +127,15 @@ function App({ tweaks }){
     if(id === 'sabores-chiquitos') setProducerEstado(nuevoEstado);
   };
 
-  // changeView updates both state and the URL hash so each section has a route
   const changeView = (v) => { setView(v); try { if(window.location.hash !== '#'+v) window.location.hash = v; } catch(e){} };
 
-  // initialize view from hash or role default
   useEffect(()=>{
-    const h = (window.location.hash||'').replace('#','');
-    if(h) setView(h);
-    else changeView(DEFAULT_VIEW[role]);
+    const def = DEFAULT_VIEW[role];
+    setView(def);
+    try { window.location.hash = def; } catch(e){}
     setProduct(null); setProductor(null); setSidebarOpen(false);
   }, [role]);
 
-  // listen to manual hash changes (back/forward or direct links)
   useEffect(()=>{
     const onHash = ()=>{ const h=(window.location.hash||'').replace('#',''); if(h) setView(h); };
     window.addEventListener('hashchange', onHash);
@@ -173,9 +146,8 @@ function App({ tweaks }){
   const openProduct = p => setProduct(p);
   const openProductor = p => { setProduct(null); setTimeout(()=>setProductor(p), 60); };
 
-  // título de la sección (para barra superior móvil)
   const navItem = (NAV[role]||[]).find(n=>n[0]===view);
-  const titulos = { perfil:'Mi perfil', suscripcion:'Suscripción' };
+  const titulos = { perfil:'Mi perfil', suscripcion:'Suscripción', 'ver-producto':'Ficha de producto', 'ver-receta':'Ver receta' };
   const titulo = navItem ? navItem[1] : (titulos[view] || '');
 
   return (
@@ -183,7 +155,6 @@ function App({ tweaks }){
       <Sidebar role={role} setRole={setRole} view={view} setView={changeView} open={sidebarOpen} setOpen={setSidebarOpen} />
 
       <div className="flex-1 min-w-0 flex flex-col min-h-screen">
-        {/* barra superior móvil */}
         <header className="lg:hidden sticky top-0 z-30 bg-[#FCFDFB]/90 backdrop-blur border-b border-[#E8EBE6] h-14 flex items-center gap-3 px-4">
           <button onClick={()=>setSidebarOpen(true)} className="w-9 h-9 rounded-lg hover:bg-[#EDF2ED] flex items-center justify-center text-[#3a4a3f]"><Icon name="menu" size={20} /></button>
           <span className="font-semibold text-[#1f2a21] text-[16px]" style={{ fontFamily:'var(--font-display)' }}>{titulo}</span>
@@ -191,25 +162,25 @@ function App({ tweaks }){
           {role!=='visitante' && <span className="ml-auto"><Avatar initials={personaDe(role).iniciales} color={personaDe(role).color} size={32} /></span>}
         </header>
 
-        <main className={view==='fani' ? 'flex-1 w-full px-4 sm:px-6 lg:px-10 py-6 sm:py-9' : view==='dashboard' ? 'flex-1 w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-9' : 'flex-1 w-full max-w-[1180px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-9'}>
-            {role==='visitante' && view==='dashboard' && <ScreenDashboard onOpen={openProduct} onNav={changeView} variant={tweaks.dashVariant} />}
-            {role==='visitante' && view==='catalogo' && <ScreenCatalogo onOpen={openProduct} onNav={changeView} />}
-            {role==='visitante' && view==='recetario' && <ScreenRecetario />}
-            {role==='visitante' && view==='mapa' && <ScreenMapa onOpen={openProduct} onOpenProductor={setProductor} />}
-            {role==='visitante' && view==='fani' && <ScreenFANI role={role} onNav={changeView} />}
-            {role==='visitante' && view==='suscripcion' && <ScreenSuscripcion />}
-            {role==='visitante' && view==='perfil' && <ProfileVisitante onNav={changeView} onRole={setRole} />}
+        <main className="flex-1 w-full max-w-[1180px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-9">
+          {role==='visitante' && view==='dashboard' && <ScreenDashboard onOpen={openProduct} onNav={changeView} variant={tweaks.dashVariant} />}
+          {role==='visitante' && view==='catalogo' && <ScreenCatalogo onOpen={openProduct} onNav={changeView} />}
+          {role==='visitante' && view==='recetario' && <ScreenRecetario />}
+          {role==='visitante' && view==='mapa' && <ScreenMapa onOpen={openProduct} onOpenProductor={setProductor} />}
+          {role==='visitante' && view==='suscripcion' && <ScreenSuscripcion />}
+          {role==='visitante' && view==='perfil' && <ProfileVisitante onNav={changeView} onRole={setRole} />}
 
-            {isSub && view==='dashboard' && <ScreenDashboard onOpen={openProduct} onNav={changeView} variant={tweaks.dashVariant} subscriber />}
-            {isSub && view==='catalogo' && <ScreenCatalogo onOpen={openProduct} onNav={changeView} />}
-            {isSub && view==='recetario' && <ScreenRecetario />}
-            {isSub && view==='mapa' && <ScreenMapa onOpen={openProduct} onOpenProductor={setProductor} />}
-            {isSub && view==='fani' && <ScreenFANI role={role} onNav={changeView} />}
-            {isSub && view==='mi-suscripcion' && <ScreenSuscriptor />}
-            {isSub && view==='perfil' && <ProfileSuscriptor onNav={changeView} onOpen={openProduct} />}
+          {isSub && view==='dashboard' && <ScreenDashboard onOpen={openProduct} onNav={changeView} variant={tweaks.dashVariant} subscriber />}
+          {isSub && view==='catalogo' && <ScreenCatalogo onOpen={openProduct} onNav={changeView} />}
+          {isSub && view==='recetario' && <ScreenRecetario />}
+          {isSub && view==='mapa' && <ScreenMapa onOpen={openProduct} onOpenProductor={setProductor} />}
+          {isSub && view==='mi-suscripcion' && <ScreenSuscriptor />}
+          {isSub && view==='perfil' && <ProfileSuscriptor onNav={changeView} onOpen={openProduct} />}
 
-            {role==='productor' && <ScreenProductor view={view} subir={subirProd} setSubir={setSubirProd} estado={producerEstado} setEstado={setProducerEstado} />}
-            {role==='admin' && <ScreenAdmin view={view} setView={changeView} onApproveProducer={handleApproveProducer} />}
+          {role==='productor' && <ScreenProductor view={view} setView={changeView} subir={subirProd} setSubir={setSubirProd} estado={producerEstado} setEstado={setProducerEstado} />}
+
+          {/* ✅ ACTUALIZADO: usa ScreenAdminV2 */}
+          {role==='admin' && <ScreenAdminV2 view={view} setView={changeView} onApproveProducer={handleApproveProducer} />}
         </main>
 
         <footer className="border-t border-[#E8EBE6] bg-[#FCFDFB] hidden lg:block">
