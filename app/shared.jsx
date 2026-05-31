@@ -342,4 +342,5 @@ function SectionTitle({ overline, title, desc, action }){
 Object.assign(window, {
   Icon, ICON_PATHS, cn, Button, Card, Badge, StatusBadge, Input, ProductGlyph, Avatar, shade,
   SeasonStrip, Modal, SegTabs, ToastProvider, useToast, Stat, SectionTitle,
-  useState, useEffect, useRef, useMemo, create
+  useState, useEffect, useRef, useMemo, createContext, useContext
+});
